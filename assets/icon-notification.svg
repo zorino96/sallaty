@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <!-- Android tints status-bar icons, so this must be a solid white silhouette
+       on transparent, with generous padding. -->
+  <g fill="#FFFFFF" transform="translate(256 276) scale(0.74) translate(-256 -256)">
+    <!-- minarets -->
+    <rect x="120" y="250" width="26" height="150" rx="6"/>
+    <circle cx="133" cy="212" r="20"/>
+    <rect x="366" y="250" width="26" height="150" rx="6"/>
+    <circle cx="379" cy="212" r="20"/>
+    <!-- dome -->
+    <path d="M176 300 C 176 214 206 150 256 104 C 306 150 336 214 336 300 Z"/>
+    <!-- crescent finial -->
+    <circle cx="256" cy="86" r="18"/>
+    <!-- body -->
+    <rect x="168" y="300" width="176" height="118" rx="10"/>
+    <!-- base -->
+    <rect x="150" y="418" width="212" height="20" rx="8"/>
+  </g>
+</svg>

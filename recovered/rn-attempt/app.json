@@ -1,0 +1,32 @@
+{
+  "expo": {
+    "name": "Sallaty",
+    "slug": "sallaty-prayer-app",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "dark",
+    "backgroundColor": "#0a1620",
+    "splash": {
+      "backgroundColor": "#0a1620",
+      "resizeMode": "contain"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "Sallaty uses your location to calculate accurate prayer times."
+      }
+    },
+    "android": {
+      "package": "com.sallaty.prayerapp",
+      "permissions": ["ACCESS_FINE_LOCATION", "ACCESS_COARSE_LOCATION"]
+    },
+    "plugins": [
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Sallaty uses your location to calculate accurate prayer times."
+        }
+      ]
+    ]
+  }
+}

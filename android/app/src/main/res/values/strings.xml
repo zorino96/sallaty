@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">سەڵاتی</string>
+    <string name="title_activity_main">سەڵاتی</string>
+    <string name="package_name">com.selati.app</string>
+    <string name="custom_url_scheme">com.selati.app</string>
+</resources>

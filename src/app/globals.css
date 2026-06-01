@@ -1,0 +1,105 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url("https://fonts.googleapis.com/css2?family=Almarai:wght@300;400;700;800&family=Amiri:wght@400;700&family=Vazirmatn:wght@400;500;600;700&display=swap");
+
+@font-face {
+  font-family: Rabar;
+  src: url(https://cdn.jsdelivr.net/gh/rabar-rwk/Rabar-Font@main/Rabar_021.ttf) format("truetype");
+  font-weight: 400;
+  font-display: swap;
+}
+
+:root {
+  --bg:       #F5EFE0;
+  --bg-elev:  #FBF6E9;
+  --ink:      #2A1F12;
+  --ink-soft: #5B4A33;
+  --gold:     #C8A654;
+  --line:     rgba(91, 74, 51, 0.12);
+}
+
+.dark {
+  --bg:       #0E2421;
+  --bg-elev:  #152F2B;
+  --ink:      #E8E0CB;
+  --ink-soft: #9FB0A7;
+  --gold:     #D4AF6A;
+  --line:     rgba(232, 224, 203, 0.10);
+}
+
+html, body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-app, "Almarai", "Vazirmatn", "Rabar", sans-serif);
+  font-feature-settings: "kern", "liga", "calt";
+}
+
+@layer components {
+  .phone-frame {
+    width: 100%;
+    max-width: 420px;
+    min-height: 100dvh;
+    margin: 0 auto;
+    position: relative;
+    overflow: hidden;
+    background: var(--bg);
+  }
+
+  .surface {
+    background: var(--bg-elev);
+    border: 1px solid var(--line);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6), 0 4px 16px rgba(91, 74, 51, 0.06);
+  }
+  .dark .surface {
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03), 0 6px 16px rgba(0, 0, 0, 0.35);
+  }
+
+  .tabular { font-variant-numeric: tabular-nums; }
+
+  .glass {
+    background: rgba(255, 255, 255, 0.55);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+  }
+  .dark .glass {
+    background: rgba(21, 47, 43, 0.55);
+  }
+
+  .hr-soft {
+    height: 1px;
+    background: var(--line);
+  }
+
+  .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 9999px;
+    background: var(--gold);
+  }
+
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+
+  .nav-active::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 9999px;
+    background: rgba(200, 166, 84, 0.18);
+    z-index: -1;
+  }
+}
+
+@layer utilities {
+  .bg-sky-fajr    { background-image: linear-gradient(180deg, #1E1B3A, #3D2C5C 50%, #6E4F7C); }
+  .bg-sky-shuruq  { background-image: linear-gradient(180deg, #F0C57E, #E89B5E 60%, #C26545); }
+  .bg-sky-dhuhr   { background-image: linear-gradient(180deg, #7AB4D1, #A8D0E0 60%, #E5EFF3); }
+  .bg-sky-asr     { background-image: linear-gradient(180deg, #C88B4F, #B0703C 60%, #8B4E2A); }
+  .bg-sky-maghrib { background-image: linear-gradient(180deg, #8B2840, #6B1F35 60%, #2E1024); }
+  .bg-sky-isha    { background-image: linear-gradient(180deg, #1E1B3A, #14122A 60%, #0A0820); }
+}

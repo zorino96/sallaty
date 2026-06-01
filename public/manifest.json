@@ -1,0 +1,15 @@
+{
+  "name": "سەڵاتی — نوێژەکانم",
+  "short_name": "سەڵاتی",
+  "description": "Prayer times, Qibla, Adhkar and habit tracking",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#F5EFE0",
+  "theme_color": "#C8A654",
+  "lang": "ckb",
+  "dir": "rtl",
+  "icons": [
+    { "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}

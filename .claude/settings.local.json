@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ls -la \"C:/Users/Zorin/Desktop/Project_PDFs/\" 2>/dev/null || echo \"Project_PDFs not accessible\")",
+      "Bash(file \"C:/Users/Zorin/Desktop/YourProjects/Sallaty_Prayer_App/\"*.tsx \"C:/Users/Zorin/Desktop/YourProjects/Sallaty_Prayer_App/\"*.ts \"C:/Users/Zorin/Desktop/YourProjects/Sallaty_Prayer_App/\"*.html)"
+    ]
+  }
+}

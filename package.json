@@ -1,0 +1,41 @@
+{
+  "name": "sallaty",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "cap:sync": "next build && npx cap sync android",
+    "cap:open": "npx cap open android",
+    "android": "next build && npx cap sync android && npx cap run android",
+    "apk": "node scripts/build-apk.mjs"
+  },
+  "dependencies": {
+    "@capacitor/android": "^6.1.0",
+    "@capacitor/app": "^6.0.1",
+    "@capacitor/core": "^6.1.0",
+    "@capacitor/geolocation": "^6.1.0",
+    "@capacitor/local-notifications": "^6.1.0",
+    "@capacitor/splash-screen": "^6.0.2",
+    "@capacitor/status-bar": "^6.0.1",
+    "adhan": "^4.4.3",
+    "lucide-react": "^0.460.0",
+    "next": "15.5.18",
+    "react": "19.2.6",
+    "react-dom": "19.2.6"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^6.1.0",
+    "@types/node": "^22.10.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "autoprefixer": "^10.4.20",
+    "eslint": "^9.16.0",
+    "eslint-config-next": "15.5.18",
+    "postcss": "^8.4.49",
+    "tailwindcss": "3.4.19",
+    "typescript": "^5.7.2"
+  }
+}
