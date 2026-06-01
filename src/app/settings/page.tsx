@@ -1,6 +1,7 @@
 'use client';
 
-import { Bell, Check, Languages, LoaderCircle, MapPin, Moon, Play, RefreshCw, Sparkles, Sun, Volume2 } from 'lucide-react';
+import Link from 'next/link';
+import { Bell, BookOpenText, Check, ChevronLeft, Languages, LoaderCircle, MapPin, Moon, Play, RefreshCw, Sparkles, Sun, Volume2 } from 'lucide-react';
 import BottomNav from '@/components/BottomNav';
 import PageHeader from '@/components/PageHeader';
 import { useApp } from '@/lib/AppProvider';
@@ -98,6 +99,20 @@ export default function SettingsPage() {
             }
           />
         </div>
+
+        {/* How to use */}
+        <Link
+          href="/guide"
+          className="surface flex items-center justify-between gap-3 rounded-2xl px-4 py-3.5 transition active:scale-[0.99]"
+        >
+          <span className="flex items-center gap-2.5">
+            <span className="grid h-9 w-9 place-items-center rounded-full bg-cream-100 text-gold-600 dark:bg-teal-800 dark:text-gold-300">
+              <BookOpenText size={16} />
+            </span>
+            <span className="text-[13.5px] font-semibold">{t('howToUse')}</span>
+          </span>
+          <ChevronLeft size={16} className="opacity-50 rtl:rotate-180" />
+        </Link>
 
         {/* Adhan / chime picker */}
         <div className="surface rounded-2xl p-3">

@@ -1,18 +1,24 @@
 'use client';
 
 import Link from 'next/link';
-import { useMemo, useState } from 'react';
-import { Search } from 'lucide-react';
+import { useEffect, useMemo, useState } from 'react';
+import { Bookmark, ChevronLeft, History, Search, TextSearch } from 'lucide-react';
 import BottomNav from '@/components/BottomNav';
 import PageHeader from '@/components/PageHeader';
 import { useApp } from '@/lib/AppProvider';
-import { SURAHS, TOTAL_AYAHS, type Surah } from '@/data/quran/surahs';
+import { SURAHS, TOTAL_AYAHS, surahById, type Surah } from '@/data/quran/surahs';
 import { arabicNumber } from '@/lib/quran';
+import { getLastRead, type LastRead } from '@/lib/bookmarks';
 
 export default function QuranIndexPage() {
   const { t, lang } = useApp();
   const isAr = lang === 'ar';
   const [query, setQuery] = useState('');
+  const [lastRead, setLastReadState] = useState<LastRead>(null);
+
+  // Read "continue reading" only on the client (localStorage) to keep SSR/CSR identical.
+  useEffect(() => { setLastReadState(getLastRead()); }, []);
+  const lastSurah = lastRead ? surahById(lastRead.s) : undefined;
 
   const filtered: Surah[] = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -41,6 +47,37 @@ export default function QuranIndexPage() {
             placeholder={t('searchSurah')}
             className="w-full bg-transparent outline-none placeholder:text-ink-800/40 dark:placeholder:text-cream-100/40"
           />
+        </div>
+      </section>
+
+      {/* Continue reading + ayah search + bookmarks */}
+      <section className="space-y-2 px-5 pt-3">
+        {lastRead && lastSurah && (
+          <Link
+            href={`/quran/${lastRead.s}#ayah-${lastRead.a}`}
+            className="surface flex items-center gap-3 rounded-2xl px-4 py-3 transition active:scale-[0.99]"
+          >
+            <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-gold-500/15 text-gold-600 dark:text-gold-300">
+              <History size={18} />
+            </span>
+            <div className="min-w-0 flex-1">
+              <div className="text-[10px] uppercase tracking-kashida text-ink-800/50 dark:text-ivory-100/50">{t('continueReading')}</div>
+              <div className="truncate font-rabar text-[14px] font-bold">
+                {lastSurah.name} · {t('ayahShort')} {isAr ? arabicNumber(lastRead.a) : lastRead.a}
+              </div>
+            </div>
+            <ChevronLeft size={16} className="shrink-0 opacity-50 rtl:rotate-180" />
+          </Link>
+        )}
+        <div className="grid grid-cols-2 gap-2">
+          <Link href="/quran/search" className="surface flex items-center gap-2.5 rounded-2xl px-4 py-3 transition active:scale-[0.98]">
+            <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-lapis-500/15 text-lapis-600 dark:text-lapis-300"><TextSearch size={17} /></span>
+            <span className="truncate text-[13px] font-bold">{t('searchAyatBtn')}</span>
+          </Link>
+          <Link href="/quran/bookmarks" className="surface flex items-center gap-2.5 rounded-2xl px-4 py-3 transition active:scale-[0.98]">
+            <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-gold-500/15 text-gold-600 dark:text-gold-300"><Bookmark size={17} /></span>
+            <span className="truncate text-[13px] font-bold">{t('bookmarks')}</span>
+          </Link>
         </div>
       </section>
 

@@ -3,50 +3,26 @@
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import {
-  Activity,
-  Bell,
-  BellOff,
-  BookMarked,
-  BookOpen,
-  CalendarDays,
-  Compass,
-  Flame,
-  Gauge,
-  GraduationCap,
-  HandHeart,
-  Heart,
-  Loader2,
-  MapPin,
-  MapPinned,
-  ScrollText,
-  Settings,
-  Sparkles,
+  Activity, Bell, BellOff, BookMarked, BookOpen, CalendarDays, Compass, Flame,
+  Gauge, GraduationCap, HandHeart, Heart, Loader2, MapPin, MapPinned,
+  ScrollText, Settings, Sparkles,
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import BottomNav from '@/components/BottomNav';
 import FeatureCard from '@/components/FeatureCard';
 import NextPrayerCard from '@/components/NextPrayerCard';
 import PrayerRow from '@/components/PrayerRow';
+import StarEmblem from '@/components/StarEmblem';
 import { useApp } from '@/lib/AppProvider';
-import { hijriDate } from '@/lib/prayerTimes';
+import { currentPrayer, hijriDate } from '@/lib/prayerTimes';
 
 export default function Home() {
   const {
-    t,
-    lang,
-    city,
-    geoStatus,
-    refreshLocation,
-    getTimes,
-    onboarded,
-    notifEnabled,
-    notifPerm,
-    enableNotifications,
-    disableNotifications,
+    t, lang, city, geoStatus, refreshLocation, getTimes, onboarded,
+    notifEnabled, notifPerm, enableNotifications, disableNotifications,
   } = useApp();
   const router = useRouter();
 
-  // First-run users → /onboarding. Mirrors the original APK behaviour.
   useEffect(() => {
     if (typeof window === 'undefined') return;
     const stored = window.localStorage.getItem('selati.onboarded') === 'true';
@@ -60,6 +36,7 @@ export default function Home() {
   }, []);
 
   const times = getTimes(now);
+  const cur = currentPrayer(now, times);
   const hijri = hijriDate(now, lang);
   const notifOn = notifEnabled && notifPerm === 'granted';
   const locationLabel =
@@ -68,41 +45,45 @@ export default function Home() {
     : city ?? t('locationAuto');
 
   return (
-    <main
-      className="flex min-h-[100dvh] flex-col"
-      style={{ paddingTop: 'max(12px, env(safe-area-inset-top))' }}
-    >
-      <div className="flex items-center justify-between px-5 pb-2 pt-2">
+    <main className="flex min-h-[100dvh] flex-col" style={{ paddingTop: 'max(10px, env(safe-area-inset-top))' }}>
+      {/* ── crown bar ── */}
+      <header className="animate-rise flex items-center justify-between px-5 pb-1 pt-2">
         <Link
           href="/settings"
           aria-label={t('settings')}
-          className="grid h-10 w-10 place-items-center rounded-full surface transition active:scale-90"
+          className="surface grid h-10 w-10 place-items-center rounded-full text-gold-700 transition active:scale-90 dark:text-gold-300"
         >
           <Settings size={16} />
         </Link>
-        <div className="text-center leading-tight">
-          <div className="font-rabar text-[15px] font-semibold">{t('appName')}</div>
-          <div className="text-[10px] uppercase tracking-[0.3em] text-ink-800/55 dark:text-cream-100/55">
+
+        <div className="flex flex-col items-center leading-none">
+          <div className="flex items-center gap-2">
+            <StarEmblem size={16} color="var(--gold)" variant="star" />
+            <span className="gild gild-shimmer font-rabar text-[19px] font-bold">{t('appName')}</span>
+            <StarEmblem size={16} color="var(--gold)" variant="star" />
+          </div>
+          <div className="mt-1 text-[9px] uppercase tracking-kashida text-ink-800/50 dark:text-ivory-100/50">
             {t('todaysPrayers')}
           </div>
-          {hijri && (
-            <div className="mt-0.5 text-[10.5px] text-gold-700 dark:text-gold-400">{hijri}</div>
-          )}
+          {hijri && <div className="mt-1 font-naskh text-[12px] text-gold-700 dark:text-gold-300">{hijri}</div>}
         </div>
+
         <Link
           href="/habits"
           aria-label={t('habits')}
-          className="grid h-10 w-10 place-items-center rounded-full surface transition active:scale-90"
+          className="surface grid h-10 w-10 place-items-center rounded-full text-gold-700 transition active:scale-90 dark:text-gold-300"
         >
           <Activity size={16} />
         </Link>
-      </div>
+      </header>
 
-      <section className="px-5">
+      {/* ── the living hero ── */}
+      <section className="animate-rise px-5 pt-2" style={{ animationDelay: '70ms' }}>
         <NextPrayerCard />
       </section>
 
-      <section className="px-5 pt-3">
+      {/* ── notifications ── */}
+      <section className="animate-rise px-5 pt-3" style={{ animationDelay: '150ms' }}>
         <button
           onClick={() => {
             if (notifOn) disableNotifications();
@@ -112,103 +93,92 @@ export default function Home() {
           disabled={notifPerm === 'denied' || notifPerm === 'unsupported'}
           aria-pressed={notifOn}
           className={
-            'surface flex w-full items-center justify-between gap-3 rounded-2xl px-4 py-2.5 transition active:scale-[0.99] ' +
+            'surface flex w-full items-center justify-between gap-3 rounded-2xl px-4 py-3 transition active:scale-[0.99] ' +
             (notifPerm === 'denied' || notifPerm === 'unsupported' ? 'opacity-60' : '')
           }
         >
-          <span className="flex items-center gap-2.5">
+          <span className="flex items-center gap-3">
             <span
               className={
-                'grid h-9 w-9 place-items-center rounded-full ' +
-                (notifOn ? 'bg-gold-500 text-white shadow-gold' : 'bg-cream-100 dark:bg-teal-800 text-gold-600')
+                'grid h-10 w-10 place-items-center rounded-full transition ' +
+                (notifOn
+                  ? 'bg-gradient-to-b from-gold-300 to-gold-600 text-ink-900 shadow-gold'
+                  : 'bg-cream-100 text-gold-600 dark:bg-teal-800 dark:text-gold-300')
               }
             >
-              {notifOn ? <Bell size={16} /> : <BellOff size={16} />}
+              {notifOn ? <Bell size={17} /> : <BellOff size={17} />}
             </span>
-            <span className="text-[13.5px] font-semibold leading-tight">
+            <span className="text-start text-[13.5px] font-bold leading-tight">
               {t('notifications')}
-              <span className="block text-[10.5px] font-normal text-ink-800/55 dark:text-cream-100/55">
-                {notifPerm === 'denied'
-                  ? t('notifDenied')
-                  : notifPerm === 'unsupported'
-                  ? '—'
+              <span className="block text-[10.5px] font-normal text-ink-800/55 dark:text-ivory-100/55">
+                {notifPerm === 'denied' ? t('notifDenied')
+                  : notifPerm === 'unsupported' ? '—'
                   : t(notifOn ? 'notifEnabledLabel' : 'notifDisabled')}
               </span>
             </span>
           </span>
-          <span
-            className={
-              'relative inline-flex h-7 w-12 shrink-0 items-center rounded-full transition ' +
-              (notifOn ? 'bg-gold-500' : 'bg-cream-200 dark:bg-teal-900')
-            }
-          >
-            <span
-              className="absolute top-0.5 h-6 w-6 rounded-full bg-white shadow transition-all"
-              style={{ insetInlineStart: notifOn ? 'calc(100% - 26px)' : '2px' }}
-            />
+          <span className={'relative inline-flex h-7 w-12 shrink-0 items-center rounded-full transition ' + (notifOn ? 'bg-gold-500' : 'bg-cream-200 dark:bg-teal-900')}>
+            <span className="absolute top-0.5 h-6 w-6 rounded-full bg-white shadow transition-all" style={{ insetInlineStart: notifOn ? 'calc(100% - 26px)' : '2px' }} />
           </span>
         </button>
       </section>
 
-      <section className="px-5 pt-4">
-        <div className="flex items-center justify-end pb-2">
+      {/* ── today's five ── */}
+      <section className="animate-rise px-5 pt-4" style={{ animationDelay: '230ms' }}>
+        <div className="mb-2 flex items-center justify-between">
+          <span className="text-[10px] uppercase tracking-kashida text-ink-800/50 dark:text-ivory-100/50">{t('todaysPrayers')}</span>
           <button
             onClick={refreshLocation}
             disabled={geoStatus === 'locating'}
             aria-label={t('refreshLocation')}
-            className="flex items-center gap-1 text-[11px] text-ink-800/55 dark:text-cream-100/55 transition active:scale-95 disabled:opacity-60 max-w-[200px]"
+            className="flex max-w-[200px] items-center gap-1 text-[11px] text-gold-700 transition active:scale-95 disabled:opacity-60 dark:text-gold-300"
           >
-            {geoStatus === 'locating' ? (
-              <Loader2 size={12} className="animate-spin" />
-            ) : (
-              <MapPin size={12} />
-            )}
+            {geoStatus === 'locating' ? <Loader2 size={12} className="animate-spin" /> : <MapPin size={12} />}
             <span className="truncate">{locationLabel}</span>
           </button>
         </div>
         <div className="space-y-2">
           {(['fajr', 'dhuhr', 'asr', 'maghrib', 'isha'] as const).map((name) => (
-            <PrayerRow key={name} name={name} time={times[name]} />
+            <PrayerRow key={name} name={name} time={times[name]} current={cur === name} />
           ))}
         </div>
       </section>
 
-      {/* Quran hero card — the highest-priority section on the home page */}
-      <section className="px-5 pt-5">
+      {/* ── Qur'an — the illuminated frontispiece ── */}
+      <section className="animate-rise px-5 pt-5" style={{ animationDelay: '320ms' }}>
         <Link
           href="/quran"
-          className="surface relative flex items-center gap-4 overflow-hidden rounded-3xl px-5 py-4 transition active:scale-[0.99]"
+          className="surface relative flex items-center gap-4 overflow-hidden rounded-[18px] rounded-t-[28px] px-5 py-5 transition active:scale-[0.99]"
         >
-          <div className="grid h-14 w-14 shrink-0 place-items-center rounded-2xl bg-gradient-to-br from-gold-400 to-gold-600 text-white shadow-gold">
-            <ScrollText size={26} />
+          <div className="pointer-events-none absolute -right-10 -top-10 opacity-[0.12] animate-spin-slow">
+            <StarEmblem size={150} color="#C9A24A" />
           </div>
-          <div className="min-w-0 flex-1">
-            <div className="font-rabar text-[16px] font-bold leading-tight">{t('quran')}</div>
-            <div className="mt-0.5 truncate text-[11px] text-ink-800/55 dark:text-cream-100/55">
-              {t('quranSub')}
-            </div>
+          <div className="relative grid h-16 w-16 shrink-0 place-items-center rounded-2xl bg-gradient-to-b from-gold-300 to-gold-600 text-ink-900 shadow-gold">
+            <ScrollText size={28} />
           </div>
-          <svg viewBox="0 0 100 100" className="absolute -left-6 -bottom-6 h-24 w-24 opacity-10" aria-hidden="true">
-            <g fill="currentColor">
-              <polygon points="50,5 60,40 95,40 67,60 78,95 50,73 22,95 33,60 5,40 40,40" />
-            </g>
-          </svg>
+          <div className="relative min-w-0 flex-1">
+            <div className="gild font-script text-[26px] leading-none" dir="rtl">ٱلْقُرْآن</div>
+            <div className="mt-1 font-rabar text-[14px] font-bold">{t('quran')}</div>
+            <div className="mt-0.5 truncate text-[11px] text-ink-800/55 dark:text-ivory-100/55">{t('quranSub')}</div>
+          </div>
         </Link>
       </section>
 
-      <section className="px-5 pt-3">
-        <div className="grid grid-cols-2 auto-rows-fr gap-2">
-          <FeatureCard href="/control"       icon={Gauge}          label={t('control')}      hint={t('controlSub')}      accent="gold" />
-          <FeatureCard href="/calendar"      icon={CalendarDays}   label={t('calendarTitle')} hint={t('calendarSub')}     accent="teal" />
-          <FeatureCard href="/qibla"         icon={Compass}        label={t('qibla')}        hint={t('facingQibla')} />
-          <FeatureCard href="/mosques"       icon={MapPinned}      label={t('mosques')}      hint={t('nearestMosque')} />
-          <FeatureCard href="/habits"        icon={Flame}          label={t('monthHeatmap')} hint={t('congregationLog')} />
-          <FeatureCard href="/adhkar"        icon={BookOpen}       label={t('adhkar')}       hint={t('morningAdhkar')}   accent="gold" />
-          <FeatureCard href="/dhikr"         icon={Sparkles}       label={t('dhikr')}        hint={t('chooseDhikr')}     accent="teal" />
-          <FeatureCard href="/learn"         icon={GraduationCap}  label={t('learnPrayer')}  hint={t('learnPrayerSub')} />
-          <FeatureCard href="/prayer-types"  icon={BookMarked}     label={t('prayerTypes')}  hint={t('prayerTypesSub')} />
-          <FeatureCard href="/adab"          icon={Heart}          label={t('adabKids')}     hint={t('adabKidsSub')}     accent="gold" />
-          <FeatureCard href="/azkar"         icon={HandHeart}      label={t('azkarCollection')} hint={t('azkarCollectionSub')} accent="teal" />
+      {/* ── the cabinet of features ── */}
+      <section className="animate-rise px-5 pt-4" style={{ animationDelay: '400ms' }}>
+        <div className="rule mb-3"><span className="block h-1.5 w-1.5 rotate-45 bg-current opacity-80" /></div>
+        <div className="grid auto-rows-fr grid-cols-2 gap-2.5">
+          <FeatureCard href="/control"      icon={Gauge}         label={t('control')}         hint={t('controlSub')}          accent="gold" />
+          <FeatureCard href="/calendar"     icon={CalendarDays}  label={t('calendarTitle')}   hint={t('calendarSub')}         accent="teal" />
+          <FeatureCard href="/qibla"        icon={Compass}       label={t('qibla')}           hint={t('facingQibla')} />
+          <FeatureCard href="/mosques"      icon={MapPinned}     label={t('mosques')}         hint={t('nearestMosque')} />
+          <FeatureCard href="/habits"       icon={Flame}         label={t('monthHeatmap')}    hint={t('congregationLog')} />
+          <FeatureCard href="/adhkar"       icon={BookOpen}      label={t('adhkar')}          hint={t('morningAdhkar')}       accent="gold" />
+          <FeatureCard href="/dhikr"        icon={Sparkles}      label={t('dhikr')}           hint={t('chooseDhikr')}         accent="teal" />
+          <FeatureCard href="/learn"        icon={GraduationCap} label={t('learnPrayer')}     hint={t('learnPrayerSub')} />
+          <FeatureCard href="/prayer-types" icon={BookMarked}    label={t('prayerTypes')}     hint={t('prayerTypesSub')} />
+          <FeatureCard href="/azkar"        icon={HandHeart}     label={t('azkarCollection')} hint={t('azkarCollectionSub')}  accent="teal" />
+          <FeatureCard href="/adab"         icon={Heart}         label={t('adabKids')}        hint={t('adabKidsSub')}         accent="gold" />
         </div>
       </section>
 

@@ -91,7 +91,10 @@ export async function requestNotifPermission(): Promise<NotifPerm> {
 // ─── Scheduling ──────────────────────────────────────────────────────────────
 
 export type ScheduleInput = {
-  times: DailyTimes;
+  // Resolve a calendar day's prayer times. Called for each of the next
+  // `daysAhead` days so the adhan keeps firing even if the app isn't reopened.
+  timesFor: (date: Date) => DailyTimes;
+  daysAhead?: number; // default 5
   title: string;
   bodyFor: (p: PrayerName) => string;
   silenceLabel: string;
@@ -141,28 +144,40 @@ export async function cancelAllScheduled(): Promise<void> {
 export async function schedulePrayerNotifications(input: ScheduleInput): Promise<void> {
   await cancelAllScheduled();
   const now = Date.now();
+  const days = Math.max(1, input.daysAhead ?? 5);
+  const horizon = (days + 1) * 24 * 60 * 60 * 1000;
 
   if (isNative()) {
     await ensureActionTypes(input.silenceLabel);
     await ensureActionListener();
     const ch = await ensureAdhanChannel(input.adhanId);
 
-    const notifications = PRAYERS.flatMap((p, i) => {
-      if (input.isMuted(p)) return [];
-      const at = input.times[p];
-      const delta = at.getTime() - now;
-      if (delta <= 5_000 || delta > 48 * 60 * 60 * 1000) return [];
-      return [{
-        id: 6100 + i,
-        title: input.title,
-        body: input.bodyFor(p),
-        schedule: { at },
-        smallIcon: 'ic_stat_icon',
-        largeIcon: 'ic_launcher',
-        autoCancel: true,
-        actionTypeId: 'PRAYER_ACTIONS',
-        ...(ch ? { sound: ch.sound, channelId: ch.channelId } : {}),
-      }];
+    // Schedule every future prayer across the next `days` calendar days. Each
+    // notification carries `allowWhileIdle: true` so Android fires it at the
+    // exact time even in Doze (screen off, phone asleep, app killed) — the OS,
+    // not the app's JS, plays the channel's adhan sound.
+    const notifications = Array.from({ length: days }).flatMap((_, d) => {
+      const day = new Date();
+      day.setDate(day.getDate() + d);
+      day.setHours(12, 0, 0, 0); // midday anchor → resolves the correct calendar day
+      const times = input.timesFor(day);
+      return PRAYERS.flatMap((p, i) => {
+        if (input.isMuted(p)) return [];
+        const at = times[p];
+        const delta = at.getTime() - now;
+        if (delta <= 5_000 || delta > horizon) return [];
+        return [{
+          id: 6100 + d * 10 + i,
+          title: input.title,
+          body: input.bodyFor(p),
+          schedule: { at, allowWhileIdle: true },
+          smallIcon: 'ic_stat_icon',
+          largeIcon: 'ic_launcher',
+          autoCancel: true,
+          actionTypeId: 'PRAYER_ACTIONS',
+          ...(ch ? { sound: ch.sound, channelId: ch.channelId } : {}),
+        }];
+      });
     });
 
     if (notifications.length) {
@@ -173,20 +188,23 @@ export async function schedulePrayerNotifications(input: ScheduleInput): Promise
       }
     }
 
-    // In-app adhan playback timers (fire while app is foregrounded).
+    // In-app adhan playback timers for today (fire while app is foregrounded;
+    // the OS notification covers the locked/background case).
+    const today = input.timesFor(new Date());
     PRAYERS.forEach((p) => {
       if (input.isMuted(p)) return;
-      const delta = input.times[p].getTime() - now;
+      const delta = today[p].getTime() - now;
       if (delta <= 1_000 || delta > 24 * 60 * 60 * 1000) return;
       pendingTimers.push(setTimeout(() => playAdhan(input.adhanId), delta));
     });
     return;
   }
 
-  // Web fallback — Notification + adhan playback via timers.
+  // Web fallback — Notification + adhan playback via timers (today only).
+  const today = input.timesFor(new Date());
   PRAYERS.forEach((p) => {
     if (input.isMuted(p)) return;
-    const delta = input.times[p].getTime() - now;
+    const delta = today[p].getTime() - now;
     if (delta <= 1_000 || delta > 48 * 60 * 60 * 1000) return;
     pendingTimers.push(
       setTimeout(() => {
@@ -215,7 +233,7 @@ export async function fireTestNotification(title: string, body: string, adhanId?
           id: 9999,
           title,
           body,
-          schedule: { at: new Date(Date.now() + 1500) },
+          schedule: { at: new Date(Date.now() + 1500), allowWhileIdle: true },
           smallIcon: 'ic_stat_icon',
           largeIcon: 'ic_launcher',
           autoCancel: true,

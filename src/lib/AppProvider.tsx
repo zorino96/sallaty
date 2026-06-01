@@ -14,6 +14,7 @@ import {
   type BangCityMeta,
 } from './bangTimes';
 import { storage } from './storage';
+import { App } from '@capacitor/app';
 import {
   cancelAllScheduled,
   checkNotifPermission,
@@ -315,18 +316,16 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   const timesSource = useMemo(() => resolveTimes(new Date()).source, [resolveTimes]);
 
-  // (Re)schedule notifications whenever the active prayer times or settings change.
-  useEffect(() => {
-    if (!ready) return;
-    if (!(notifEnabled && notifPerm === 'granted')) {
-      void cancelAllScheduled();
-      return;
-    }
-    const times = resolveTimes(new Date()).times;
+  // Build + push a rolling, Doze-proof prayer schedule (next 5 days). Each
+  // notification fires at the exact time even when the screen is off / app is
+  // killed, playing the adhan as its channel sound.
+  const scheduleNotifications = useCallback(() => {
+    if (!ready || !(notifEnabled && notifPerm === 'granted')) return;
     const dict = dictionaries[lang] as Record<string, string>;
     const labelFor = (p: PrayerName): string => dict[p] ?? p;
     void schedulePrayerNotifications({
-      times,
+      timesFor: (d) => resolveTimes(d).times,
+      daysAhead: 5,
       title: dict.prayerTime ?? 'Prayer time',
       bodyFor: labelFor,
       silenceLabel: dict.silenceAdhan ?? 'Silence',
@@ -334,6 +333,26 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       adhanId,
     });
   }, [ready, notifEnabled, notifPerm, resolveTimes, lang, adhanId]);
+
+  // (Re)schedule whenever prayer times / settings change.
+  useEffect(() => {
+    if (!ready) return;
+    if (!(notifEnabled && notifPerm === 'granted')) {
+      void cancelAllScheduled();
+      return;
+    }
+    scheduleNotifications();
+  }, [ready, notifEnabled, notifPerm, scheduleNotifications]);
+
+  // Refresh the rolling window each time the app returns to the foreground, so
+  // the adhan keeps firing for days without the user reopening the app.
+  useEffect(() => {
+    let handle: { remove: () => void } | undefined;
+    App.addListener('appStateChange', ({ isActive }) => {
+      if (isActive) scheduleNotifications();
+    }).then((h) => { handle = h; }).catch(() => undefined);
+    return () => { handle?.remove?.(); };
+  }, [scheduleNotifications]);
 
   const value = useMemo<AppCtx>(
     () => ({

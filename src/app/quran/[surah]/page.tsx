@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { ChevronLeft, ChevronRight, Eye, EyeOff, LoaderCircle } from 'lucide-react';
+import { Bookmark, BookmarkCheck, ChevronLeft, ChevronRight, Eye, EyeOff, LoaderCircle } from 'lucide-react';
 import BottomNav from '@/components/BottomNav';
 import PageHeader from '@/components/PageHeader';
 import { useApp } from '@/lib/AppProvider';
@@ -16,6 +16,7 @@ import {
   type SurahArData,
   type SurahKuData,
 } from '@/lib/quran';
+import { bookmarkedAyat, setLastRead, subscribeBookmarks, toggleBookmark } from '@/lib/bookmarks';
 
 export default function SurahDetailPage() {
   return <SurahContent />;
@@ -31,6 +32,8 @@ function SurahContent() {
   const [ku, setKu] = useState<SurahKuData | null>(null);
   const [showTranslation, setShowTranslation] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [bm, setBm] = useState<Set<number>>(new Set());
+  const [flash, setFlash] = useState<number | null>(null);
 
   useEffect(() => {
     let alive = true;
@@ -53,6 +56,35 @@ function SurahContent() {
       alive = false;
     };
   }, [n]);
+
+  // Keep the per-ayah bookmark state in sync (live across pages).
+  useEffect(() => {
+    const sync = () => setBm(bookmarkedAyat(n));
+    sync();
+    return subscribeBookmarks(sync);
+  }, [n]);
+
+  // After the surah renders: record "continue reading" and, if arriving with a
+  // #ayah-N target (from search or bookmarks), scroll to it and flash it.
+  useEffect(() => {
+    if (!ar) return;
+    let target = 1;
+    if (typeof window !== 'undefined' && window.location.hash.startsWith('#ayah-')) {
+      const parsed = parseInt(window.location.hash.slice(6), 10);
+      if (parsed >= 1) target = parsed;
+    }
+    setLastRead(n, target);
+    if (target <= 1) return;
+    const tid = setTimeout(() => {
+      const el = document.getElementById(`ayah-${target}`);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        setFlash(target);
+        setTimeout(() => setFlash(null), 2400);
+      }
+    }, 90);
+    return () => clearTimeout(tid);
+  }, [ar, n]);
 
   if (!meta) {
     return (
@@ -133,14 +165,38 @@ function SurahContent() {
           {ar.ayahs.map((a, i) => {
             const kuT = ku?.ayahs[i]?.t;
             return (
-              <article key={a.n} className="surface rounded-2xl p-4">
+              <article
+                key={a.n}
+                id={`ayah-${a.n}`}
+                style={{ scrollMarginTop: '90px' }}
+                className={
+                  'surface rounded-2xl p-4 transition ' +
+                  (flash === a.n ? 'ring-2 ring-gold-500 shadow-glow' : '')
+                }
+              >
                 <div className="mb-2 flex items-center justify-between gap-2 text-[10.5px] text-ink-800/55 dark:text-cream-100/55">
                   <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-gold-500/15 font-semibold text-gold-700 dark:text-gold-400">
                     <span className="tabular">{arabicNumber(a.n)}</span>
                   </span>
-                  <span className="tabular">
-                    {t('juzShort')} {arabicNumber(a.juz)} · {t('pageShort')} {arabicNumber(a.page)}
-                  </span>
+                  <div className="flex items-center gap-2.5">
+                    <span className="tabular">
+                      {t('juzShort')} {arabicNumber(a.juz)} · {t('pageShort')} {arabicNumber(a.page)}
+                    </span>
+                    <button
+                      onClick={() => {
+                        toggleBookmark(n, a.n);
+                        if (typeof navigator !== 'undefined' && 'vibrate' in navigator) navigator.vibrate?.(6);
+                      }}
+                      aria-label={t('bookmarks')}
+                      aria-pressed={bm.has(a.n)}
+                      className={
+                        'grid h-7 w-7 place-items-center rounded-full transition active:scale-90 ' +
+                        (bm.has(a.n) ? 'text-gold-600 dark:text-gold-300' : 'text-ink-800/35 dark:text-ivory-100/35')
+                      }
+                    >
+                      {bm.has(a.n) ? <BookmarkCheck size={15} /> : <Bookmark size={15} />}
+                    </button>
+                  </div>
                 </div>
                 <div className="font-arabic text-[20px] font-bold leading-[2.2] text-right" dir="rtl">
                   {a.t}

@@ -2,7 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url("https://fonts.googleapis.com/css2?family=Almarai:wght@300;400;700;800&family=Amiri:wght@400;700&family=Vazirmatn:wght@400;500;600;700&display=swap");
+/* ── Type: calligraphic Arabic display + Arabic serif + luxe numerals + Kurdish ── */
+@import url("https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@400;700&family=Amiri:wght@400;700&family=Almarai:wght@300;400;700;800&family=Vazirmatn:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&display=swap");
 
 @font-face {
   font-family: Rabar;
@@ -11,22 +12,44 @@
   font-display: swap;
 }
 
+/* ── The Illuminated Hours — manuscript palette ───────────────────────────── */
 :root {
-  --bg:       #F5EFE0;
-  --bg-elev:  #FBF6E9;
-  --ink:      #2A1F12;
-  --ink-soft: #5B4A33;
-  --gold:     #C8A654;
-  --line:     rgba(91, 74, 51, 0.12);
+  /* parchment day */
+  --bg:        #F1E6CC;
+  --bg-2:      #EADCBC;
+  --bg-elev:   #FCF6E6;
+  --ink:       #2A2012;
+  --ink-soft:  #6B563A;
+  --gold:      #A8812F;
+  --gold-deep: #856321;
+  --lapis:     #27399A;
+  --line:      rgba(120, 95, 40, 0.18);
+  --hair:      rgba(168, 129, 47, 0.55);
+  --tex:       0.05;       /* girih opacity */
+  --grain:     0.045;
+  --aura-1:    rgba(201, 162, 74, 0.22);
+  --aura-2:    rgba(39, 57, 154, 0.10);
+
+  --girih: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='92' height='92' viewBox='0 0 92 92'%3E%3Cg fill='none' stroke='%23A8812F' stroke-width='1.1'%3E%3Crect x='28' y='28' width='36' height='36'/%3E%3Crect x='28' y='28' width='36' height='36' transform='rotate(45 46 46)'/%3E%3Ccircle cx='46' cy='46' r='5.5'/%3E%3Crect x='-8' y='-8' width='36' height='36' transform='rotate(45 10 10)'/%3E%3Crect x='64' y='64' width='36' height='36' transform='rotate(45 82 82)'/%3E%3Crect x='64' y='-8' width='36' height='36' transform='rotate(45 82 10)'/%3E%3Crect x='-8' y='64' width='36' height='36' transform='rotate(45 10 82)'/%3E%3C/g%3E%3C/svg%3E");
+  --grainurl: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='150' height='150'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
 }
 
 .dark {
-  --bg:       #0E2421;
-  --bg-elev:  #152F2B;
-  --ink:      #E8E0CB;
-  --ink-soft: #9FB0A7;
-  --gold:     #D4AF6A;
-  --line:     rgba(232, 224, 203, 0.10);
+  /* lapis night */
+  --bg:        #0A1330;
+  --bg-2:      #070D26;
+  --bg-elev:   #131F50;
+  --ink:       #F4ECD8;
+  --ink-soft:  #A9B6DF;
+  --gold:      #E7C77B;
+  --gold-deep: #C9A24A;
+  --lapis:     #5E78D6;
+  --line:      rgba(231, 199, 123, 0.14);
+  --hair:      rgba(231, 199, 123, 0.40);
+  --tex:       0.07;
+  --grain:     0.06;
+  --aura-1:    rgba(231, 199, 123, 0.16);
+  --aura-2:    rgba(94, 120, 214, 0.20);
 }
 
 html, body {
@@ -34,72 +57,146 @@ html, body {
   color: var(--ink);
   font-family: var(--font-app, "Almarai", "Vazirmatn", "Rabar", sans-serif);
   font-feature-settings: "kern", "liga", "calt";
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Atmosphere — a top aura of gold/lapis light + a faint girih lattice.
+   Painted on body so it sits behind the phone frame's content. The lattice is
+   a single cached vector tile (cheap); heavier grain is reserved for the small
+   hero region only, to keep the compositor light on mobile. */
+body {
+  position: relative;
+  min-height: 100dvh;
+  background:
+    radial-gradient(120% 70% at 50% -8%, var(--aura-1), transparent 55%),
+    radial-gradient(90% 60% at 92% 4%, var(--aura-2), transparent 60%),
+    var(--bg);
+}
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-image: var(--girih);
+  background-size: 92px 92px;
+  opacity: var(--tex);
+  pointer-events: none;
+  z-index: 0;
 }
 
 @layer components {
   .phone-frame {
     width: 100%;
-    max-width: 420px;
+    max-width: 440px;
     min-height: 100dvh;
     margin: 0 auto;
     position: relative;
-    overflow: hidden;
-    background: var(--bg);
+    z-index: 1;
+    overflow: clip;
   }
 
+  /* Illuminated manuscript panel. */
   .surface {
-    background: var(--bg-elev);
+    background:
+      linear-gradient(180deg, color-mix(in srgb, var(--bg-elev) 100%, transparent), var(--bg-elev));
     border: 1px solid var(--line);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6), 0 4px 16px rgba(91, 74, 51, 0.06);
+    box-shadow: var(--tw-shadow, 0 10px 30px -14px rgba(42,32,18,0.30)), inset 0 1px 0 rgba(255,255,255,0.45);
   }
   .dark .surface {
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03), 0 6px 16px rgba(0, 0, 0, 0.35);
+    box-shadow: 0 16px 44px -18px rgba(0,0,0,0.7), inset 0 1px 0 rgba(231,199,123,0.08);
   }
 
-  .tabular { font-variant-numeric: tabular-nums; }
-
+  /* Frosted brass — for floating bars. */
   .glass {
-    background: rgba(255, 255, 255, 0.55);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-  }
-  .dark .glass {
-    background: rgba(21, 47, 43, 0.55);
+    background: color-mix(in srgb, var(--bg-elev) 78%, transparent);
+    backdrop-filter: blur(22px) saturate(1.3);
+    -webkit-backdrop-filter: blur(22px) saturate(1.3);
+    border: 1px solid var(--line);
   }
 
-  .hr-soft {
+  .tabular { font-variant-numeric: tabular-nums lining-nums; }
+  .clk { font-family: "Fraunces", "Amiri", Georgia, serif; font-variant-numeric: tabular-nums lining-nums; }
+
+  /* Gold-leaf text. */
+  .gild {
+    background: linear-gradient(100deg, var(--gold-deep), var(--gold) 40%, #FBEFC6 52%, var(--gold) 64%, var(--gold-deep));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .gild-shimmer {
+    background-size: 220% 100%;
+    animation: shimmer 5s linear infinite;
+  }
+
+  /* Gold hairline with a central lozenge — the manuscript rule. */
+  .rule {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--hair);
+  }
+  .rule::before, .rule::after {
+    content: "";
     height: 1px;
-    background: var(--line);
+    flex: 1;
+    background: linear-gradient(90deg, transparent, currentColor 60%, currentColor);
   }
+  .rule::after { background: linear-gradient(90deg, currentColor, currentColor 40%, transparent); }
 
-  .dot {
-    width: 6px;
-    height: 6px;
-    border-radius: 9999px;
-    background: var(--gold);
-  }
+  .hr-soft { height: 1px; background: var(--line); }
+  .dot { width: 6px; height: 6px; border-radius: 9999px; background: var(--gold); }
 
-  .no-scrollbar {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-  }
+  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
   .no-scrollbar::-webkit-scrollbar { display: none; }
 
+  /* gilded active pill for the instrument bar */
   .nav-active::before {
     content: "";
     position: absolute;
     inset: 0;
     border-radius: 9999px;
-    background: rgba(200, 166, 84, 0.18);
+    background: radial-gradient(120% 120% at 50% 0%, rgba(231,199,123,0.30), rgba(231,199,123,0.08));
+    box-shadow: inset 0 0 0 1px rgba(231,199,123,0.45), 0 6px 16px -6px rgba(224,188,99,0.6);
     z-index: -1;
   }
 }
 
 @layer utilities {
-  .bg-sky-fajr    { background-image: linear-gradient(180deg, #1E1B3A, #3D2C5C 50%, #6E4F7C); }
-  .bg-sky-shuruq  { background-image: linear-gradient(180deg, #F0C57E, #E89B5E 60%, #C26545); }
-  .bg-sky-dhuhr   { background-image: linear-gradient(180deg, #7AB4D1, #A8D0E0 60%, #E5EFF3); }
-  .bg-sky-asr     { background-image: linear-gradient(180deg, #C88B4F, #B0703C 60%, #8B4E2A); }
-  .bg-sky-maghrib { background-image: linear-gradient(180deg, #8B2840, #6B1F35 60%, #2E1024); }
-  .bg-sky-isha    { background-image: linear-gradient(180deg, #1E1B3A, #14122A 60%, #0A0820); }
+  /* Sky of the hour — luminous, jewel-toned gradients + the sun-glow accent. */
+  .sky-fajr {
+    --sky-glow: #F2BBC6; --sky-deep: #0B1026;
+    background-image: linear-gradient(178deg, #0B1026 4%, #241B4C 42%, #4E3470 72%, #92506E 96%);
+  }
+  .sky-shuruq {
+    --sky-glow: #FFE7B0; --sky-deep: #C2532F;
+    background-image: linear-gradient(178deg, #5A3E6B 2%, #B8633C 44%, #E8945A 74%, #F4C06E 98%);
+  }
+  .sky-dhuhr {
+    --sky-glow: #FFFFFF; --sky-deep: #2E63B8;
+    background-image: linear-gradient(178deg, #1E4FA0 4%, #3E79C6 40%, #79AEDD 74%, #CFE7F4 99%);
+  }
+  .sky-asr {
+    --sky-glow: #FFE2A6; --sky-deep: #7A4322;
+    background-image: linear-gradient(178deg, #4A2E52 2%, #9A5C2C 44%, #C7883C 74%, #E6B968 98%);
+  }
+  .sky-maghrib {
+    --sky-glow: #FFC79E; --sky-deep: #1C0A22;
+    background-image: linear-gradient(178deg, #1C0A22 4%, #5A1E45 40%, #8A2746 66%, #C25C4E 96%);
+  }
+  .sky-isha {
+    --sky-glow: #C9D4FF; --sky-deep: #060A22;
+    background-image: linear-gradient(178deg, #060A22 6%, #0B1437 42%, #15205A 74%, #243a86 99%);
+  }
+
+  .text-shadow-sky { text-shadow: 0 2px 18px rgba(0,0,0,0.35); }
+  .mask-fade-b { -webkit-mask-image: linear-gradient(180deg, #000 70%, transparent); mask-image: linear-gradient(180deg, #000 70%, transparent); }
+}
+
+/* Respect reduced-motion. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+  }
 }

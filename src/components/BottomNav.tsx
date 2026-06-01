@@ -14,32 +14,47 @@ const TABS: Array<{ href: string; label: StringKey; icon: typeof House }> = [
   { href: '/settings', label: 'settings', icon: Settings },
 ];
 
+// A floating brass instrument bar. The active tab lifts into a gilded medallion.
 export default function BottomNav() {
   const { t } = useApp();
   const pathname = usePathname();
 
   return (
     <nav
-      className="sticky bottom-0 z-30 mx-auto mt-3 mb-3 w-[92%] rounded-full surface px-3 py-2"
+      className="glass sticky bottom-0 z-30 mx-auto mt-3 mb-3 w-[92%] max-w-[412px] rounded-[26px] px-2.5 pt-2"
       style={{ paddingBottom: 'max(8px, env(safe-area-inset-bottom))' }}
     >
-      <ul className="flex items-center justify-between">
+      <ul className="flex items-end justify-between">
         {TABS.map(({ href, label, icon: Icon }) => {
           const active = pathname === href || (href !== '/' && pathname.startsWith(href));
           return (
-            <li key={href} className="relative">
+            <li key={href} className="flex-1">
               <Link
                 href={href}
                 aria-label={t(label)}
                 aria-current={active ? 'page' : undefined}
-                className={
-                  'relative flex h-11 min-w-[44px] items-center justify-center rounded-full px-3 transition-all active:scale-90 ' +
-                  (active
-                    ? 'text-gold-600 dark:text-gold-400 nav-active'
-                    : 'text-ink-800/60 dark:text-cream-100/55')
-                }
+                className="group flex flex-col items-center gap-1 rounded-2xl py-1 transition active:scale-90"
               >
-                <Icon size={20} strokeWidth={2.2} />
+                <span
+                  className={
+                    'grid h-10 w-10 place-items-center rounded-full transition-all duration-300 ' +
+                    (active
+                      ? '-translate-y-2 bg-gradient-to-b from-gold-300 to-gold-600 text-ink-900 shadow-gold'
+                      : 'text-ink-800/55 dark:text-ivory-100/55 group-hover:text-gold-600')
+                  }
+                >
+                  <Icon size={active ? 19 : 20} strokeWidth={active ? 2.4 : 2} />
+                </span>
+                <span
+                  className={
+                    'text-[9.5px] font-semibold leading-none transition-all duration-300 ' +
+                    (active
+                      ? '-translate-y-1.5 text-gold-700 dark:text-gold-300 opacity-100'
+                      : 'text-ink-800/45 dark:text-ivory-100/40 opacity-0 group-hover:opacity-100')
+                  }
+                >
+                  {t(label)}
+                </span>
               </Link>
             </li>
           );
