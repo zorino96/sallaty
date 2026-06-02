@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { LoaderCircle, Mic, Search, X } from 'lucide-react';
+import { LoaderCircle, Search, X } from 'lucide-react';
 import BottomNav from '@/components/BottomNav';
 import PageHeader from '@/components/PageHeader';
 import { useApp } from '@/lib/AppProvider';
@@ -19,7 +19,6 @@ export default function QuranSearchPage() {
 
   const [ready, setReady] = useState(isIndexReady());
   const [query, setQuery] = useState('');
-  const [listening, setListening] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -33,40 +32,6 @@ export default function QuranSearchPage() {
     if (!ready) return { results: [], total: 0 };
     return { results: searchAyat(query, 60), total: countAyat(query) };
   }, [query, ready]);
-
-  // Voice → text: progressive enhancement, only if the browser exposes the
-  // Web Speech API. No API key, no cost; gracefully absent otherwise.
-  const speech = useMemo(() => {
-    if (typeof window === 'undefined') return null;
-    return (window as unknown as { SpeechRecognition?: unknown; webkitSpeechRecognition?: unknown })
-      .SpeechRecognition ?? (window as unknown as { webkitSpeechRecognition?: unknown }).webkitSpeechRecognition ?? null;
-  }, []);
-
-  const startVoice = (): void => {
-    if (!speech) return;
-    try {
-      const Rec = speech as new () => {
-        lang: string; interimResults: boolean; maxAlternatives: number;
-        start: () => void; stop: () => void;
-        onresult: ((e: { results: ArrayLike<ArrayLike<{ transcript: string }>> }) => void) | null;
-        onend: (() => void) | null; onerror: (() => void) | null;
-      };
-      const rec = new Rec();
-      rec.lang = isAr ? 'ar-SA' : 'ckb-IQ';
-      rec.interimResults = false;
-      rec.maxAlternatives = 1;
-      rec.onresult = (e) => {
-        const text = e.results?.[0]?.[0]?.transcript ?? '';
-        if (text) setQuery(text);
-      };
-      rec.onend = () => setListening(false);
-      rec.onerror = () => setListening(false);
-      setListening(true);
-      rec.start();
-    } catch {
-      setListening(false);
-    }
-  };
 
   const q = query.trim();
 
@@ -90,22 +55,7 @@ export default function QuranSearchPage() {
               <X size={16} />
             </button>
           )}
-          {speech && (
-            <button
-              onClick={startVoice}
-              aria-label={t('voiceSearch')}
-              className={
-                'grid h-8 w-8 shrink-0 place-items-center rounded-full transition active:scale-90 ' +
-                (listening ? 'bg-gold-500 text-white animate-halo' : 'bg-cream-100 text-gold-600 dark:bg-teal-800 dark:text-gold-300')
-              }
-            >
-              <Mic size={15} />
-            </button>
-          )}
         </div>
-        {listening && (
-          <div className="mt-2 text-center text-[11px] text-gold-700 dark:text-gold-300">{t('listening')}</div>
-        )}
       </section>
 
       <section className="flex-1 space-y-2 px-5 pt-3 pb-4">

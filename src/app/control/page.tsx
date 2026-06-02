@@ -81,8 +81,10 @@ export default function ControlPage() {
 
   const testNotification = async (): Promise<void> => {
     if (typeof navigator !== 'undefined' && 'vibrate' in navigator) navigator.vibrate?.(8);
-    playAdhan(adhanId);
     if (notifPerm !== 'granted') await enableNotifications();
+    // On native this arms a real alarm ~5s out (lock the screen to verify the
+    // adhan + screen-wake). On web it plays in-page. No immediate in-app play
+    // here, so the native test isn't doubled.
     await fireTestNotification(t('prayerTime'), t('testNotification'), adhanId);
   };
 
