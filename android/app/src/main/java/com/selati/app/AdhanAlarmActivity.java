@@ -14,6 +14,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationManagerCompat;
 
 /**
  * Launched via the service's full-screen intent. Turns the screen on and shows
@@ -59,7 +60,13 @@ public class AdhanAlarmActivity extends AppCompatActivity {
         stop.setBackgroundColor(0xFFE0BC63);
         stop.setOnClickListener(new View.OnClickListener() {
             @Override public void onClick(View v) {
-                startService(new Intent(AdhanAlarmActivity.this, AdhanService.class).setAction(AdhanService.ACTION_STOP));
+                // Stop the playing adhan service (it owns the MediaPlayer)…
+                try {
+                    startService(new Intent(AdhanAlarmActivity.this, AdhanService.class)
+                            .setAction(AdhanService.ACTION_STOP));
+                } catch (Exception ignored) {}
+                // …and clear any fallback sounding notification.
+                NotificationManagerCompat.from(AdhanAlarmActivity.this).cancel(AdhanReceiver.NOTIF_ID);
                 finish();
             }
         });

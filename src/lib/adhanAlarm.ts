@@ -17,6 +17,8 @@ export interface AdhanAlarmPlugin {
   scheduleTest(options: { seconds?: number; sound?: string; title?: string; body?: string }): Promise<void>;
   canScheduleExact(): Promise<{ value: boolean }>;
   openExactAlarmSettings(): Promise<void>;
+  isIgnoringBatteryOptimizations(): Promise<{ value: boolean }>;
+  requestBatteryExemption(): Promise<void>;
 }
 
 export const AdhanAlarm = registerPlugin<AdhanAlarmPlugin>('AdhanAlarm');

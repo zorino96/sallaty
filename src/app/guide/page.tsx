@@ -6,6 +6,7 @@ import SkyContainer from '@/components/SkyContainer';
 import StarEmblem from '@/components/StarEmblem';
 import { useApp } from '@/lib/AppProvider';
 import { storage } from '@/lib/storage';
+import { AdhanAlarm } from '@/lib/adhanAlarm';
 
 type Step = {
   icon: LucideIcon;
@@ -109,6 +110,17 @@ export default function GuidePage() {
                     <span className="font-rabar text-[15px] font-bold leading-tight">{c.t}</span>
                   </div>
                   <p className="mt-1.5 whitespace-pre-line text-[13px] leading-7 text-ink-800/70 dark:text-ivory-100/70">{c.b}</p>
+                  {s.accent === 'gold' && (
+                    <button
+                      onClick={async () => {
+                        try { await AdhanAlarm.requestBatteryExemption(); } catch { /* ignore */ }
+                        try { await AdhanAlarm.openExactAlarmSettings(); } catch { /* ignore */ }
+                      }}
+                      className="mt-3 rounded-full bg-gradient-to-b from-gold-300 to-gold-600 px-4 py-2 text-[12px] font-bold text-ink-900 shadow-gold transition active:scale-95"
+                    >
+                      {isAr ? 'تفعيل أذان موثوق' : 'چالاککردنی بانگی بەردەوام'}
+                    </button>
+                  )}
                 </div>
               </div>
             </div>

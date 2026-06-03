@@ -35,11 +35,6 @@
         </provider>
 
         <!-- Adhan alarm pipeline -->
-        <service
-            android:name=".AdhanService"
-            android:exported="false"
-            android:foregroundServiceType="mediaPlayback" />
-
         <receiver android:name=".AdhanReceiver" android:exported="false" />
 
         <receiver android:name=".BootReceiver" android:exported="true">
@@ -60,6 +55,14 @@
             android:showWhenLocked="true"
             android:turnScreenOn="true"
             android:theme="@style/AppTheme.NoActionBarLaunch" />
+
+        <!-- Plays the full adhan via MediaPlayer on the ALARM stream. Started by
+             AdhanReceiver when the exact alarm fires (allowed from a setAlarmClock
+             alarm even on Android 14). Survives screen-off / Doze while it plays. -->
+        <service
+            android:name=".AdhanService"
+            android:exported="false"
+            android:foregroundServiceType="mediaPlayback" />
     </application>
 
     <!-- Permissions -->
@@ -73,11 +76,14 @@
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
-    <!-- Native adhan alarm: wake the device + play the full adhan over the lock screen -->
+    <!-- Native adhan alarm: wake the device + sound the adhan over the lock screen -->
     <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
+    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
+
+    <!-- Foreground service that plays the full adhan when the alarm fires -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
-    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
 
     <!-- Location for accurate prayer times + qibla -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
