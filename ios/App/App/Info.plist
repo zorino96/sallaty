@@ -28,23 +28,36 @@
 	<string>Main</string>
 	<key>UIRequiredDeviceCapabilities</key>
 	<array>
-		<string>armv7</string>
+		<string>arm64</string>
 	</array>
+	<!-- Portrait only: every screen is laid out as a phone column (prayer list,
+	     qibla compass, mushaf page); landscape would only stretch it. -->
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
-		<string>UIInterfaceOrientationLandscapeLeft</string>
-		<string>UIInterfaceOrientationLandscapeRight</string>
-	</array>
-	<key>UISupportedInterfaceOrientations~ipad</key>
-	<array>
-		<string>UIInterfaceOrientationPortrait</string>
-		<string>UIInterfaceOrientationPortraitUpsideDown</string>
-		<string>UIInterfaceOrientationLandscapeLeft</string>
-		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<true/>
+	<!-- The app ships no encryption of its own beyond standard HTTPS, so this
+	     answers App Store Connect's export-compliance question once, here,
+	     instead of on every single upload. -->
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
+	<!-- AdMob iOS application id (real — publisher pub-7966248989436758).
+	     The Ads SDK CRASHES at startup if this is missing. Which ad UNIT is
+	     served is decided in src/lib/ads.ts (test vs real).
+	     Note there is deliberately no NSUserTrackingUsageDescription: the app
+	     does not ask for tracking permission, so iOS ads stay non-personalised —
+	     consistent with the privacy policy's "no tracking SDKs" promise. -->
+	<key>GADApplicationIdentifier</key>
+	<string>ca-app-pub-7966248989436758~3242054624</string>
+	<key>SKAdNetworkItems</key>
+	<array>
+		<dict>
+			<key>SKAdNetworkIdentifier</key>
+			<string>cstr6suwn9.skadnetwork</string>
+		</dict>
+	</array>
 	<!-- Location: required by @capacitor/geolocation, or iOS crashes on request.
 	     Shown in the system permission dialog (Kurdish + Arabic). -->
 	<key>NSLocationWhenInUseUsageDescription</key>
