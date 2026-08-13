@@ -60,11 +60,14 @@ const SHOTS = [
 // insists on an exact iPhone 6.9" frame, so we shoot that viewport natively
 // rather than upscaling the Play shots and shipping something blurry.
 const TARGETS = {
-  play: { dir: 'store', viewport: { width: 360, height: 640 } },  // → 1080x1920
-  ios: { dir: 'store/ios', viewport: { width: 430, height: 932 } }, // → 1290x2796
+  play: { dir: 'store', viewport: { width: 360, height: 640 } },       // → 1080x1920
+  ios: { dir: 'store/ios', viewport: { width: 430, height: 932 } },    // → 1290x2796, 6.9"
+  'ios65': { dir: 'store/ios-65', viewport: { width: 414, height: 896 } }, // → 1242x2688, 6.5"
 };
 
-const targetName = process.argv.includes('--ios') ? 'ios' : 'play';
+const targetName = process.argv.includes('--ios65') ? 'ios65'
+  : process.argv.includes('--ios') ? 'ios'
+  : 'play';
 const target = TARGETS[targetName];
 const OUT_DIR = target.dir;
 
