@@ -53,6 +53,11 @@ type AppCtx = {
   city: string | undefined;
   geoStatus: GeoStatus;
   refreshLocation: () => Promise<void>;
+  // Manual city override (e.g. when travelling): pick one of the covered
+  // amozhgary cities so the adhan uses its exact official times.
+  cities: BangCityMeta[];
+  selectedCitySlug: string | null;
+  selectCity: (slug: string) => void;
 
   onboarded: boolean;
   setOnboarded: (b: boolean) => void;
@@ -97,6 +102,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const [coords, setCoords] = useState<Coords>(DEFAULT_COORDS);
   const [city, setCity] = useState<string | undefined>(undefined);
   const [geoStatus, setGeoStatus] = useState<GeoStatus>('idle');
+  const [cities, setCities] = useState<BangCityMeta[]>([]);
+  const [selectedCitySlug, setSelectedCitySlug] = useState<string | null>(null);
   const [onboarded, setOnboardedState] = useState(false);
   const [method, setMethodState] = useState<CalcMethodId>('MuslimWorldLeague');
   const [madhab, setMadhabState] = useState<'shafi' | 'hanafi'>('shafi');
@@ -117,6 +124,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     setThemeState(storage.get<ThemeMode>('theme', 'auto'));
     setCoords(storage.get<Coords>('coords', DEFAULT_COORDS));
     setCity(storage.get<string | undefined>('city', undefined));
+    setSelectedCitySlug(storage.get<string | null>('selectedCity', null));
     setOnboardedState(storage.get<boolean>('onboarded', false));
     setMethodState(storage.get<CalcMethodId>('method', 'Karachi'));
     setMadhabState(storage.get<'shafi' | 'hanafi'>('madhab', 'shafi'));
@@ -204,7 +212,23 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     storage.set('adhan', id);
   }, []);
 
+  const selectCity = useCallback((slug: string) => {
+    const c = cities.find((x) => x.slug === slug);
+    if (!c) return;
+    const co = { lat: c.lat, lng: c.lng };
+    setSelectedCitySlug(slug);
+    storage.set('selectedCity', slug);
+    setCoords(co);
+    storage.set('coords', co);
+    setCity(c.nameKu);
+    storage.set('city', c.nameKu);
+    setGeoStatus('granted');
+  }, [cities]);
+
   const refreshLocation = useCallback(async () => {
+    // Switching back to GPS clears any manual city override.
+    setSelectedCitySlug(null);
+    storage.remove('selectedCity');
     setGeoStatus('locating');
     const result = await getCurrentCoords();
     if (!result) {
@@ -235,6 +259,14 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     storage.set('notifEnabled', false);
     void cancelAllScheduled();
   }, []);
+
+  // Load the full covered-city list once (for the manual city picker).
+  useEffect(() => {
+    if (!ready) return;
+    let alive = true;
+    void loadBangIndex().then((idx) => { if (alive) setCities(idx); });
+    return () => { alive = false; };
+  }, [ready]);
 
   // Load the nearest amozhgary city's bundled times whenever the location changes.
   useEffect(() => {
@@ -366,6 +398,9 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       city,
       geoStatus,
       refreshLocation,
+      cities,
+      selectedCitySlug,
+      selectCity,
       onboarded,
       setOnboarded,
       method,
@@ -388,6 +423,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     }),
     [
       ready, lang, setLang, theme, setTheme, coords, city, geoStatus, refreshLocation,
+      cities, selectedCitySlug, selectCity,
       onboarded, setOnboarded, method, setMethod, madhab, setMadhab,
       adjustments, setAdjustment, applyIraqPreset, resetAdjustments, adhanId, setAdhanId,
       notifEnabled, notifPerm, enableNotifications, disableNotifications, getTimes,

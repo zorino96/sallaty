@@ -24,6 +24,13 @@
 
         </activity>
 
+        <!-- AdMob application id (real — publisher pub-7966248989436758).
+             The Ads SDK CRASHES at startup if this meta-data is missing.
+             Which ad UNIT is served is decided in src/lib/ads.ts (test vs real). -->
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-7966248989436758~3302830034" />
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.fileprovider"
@@ -47,6 +54,10 @@
             </intent-filter>
         </receiver>
 
+        <!-- The alarm screen: brought to the front by the alarm notification's
+             full-screen intent, wakes the device over the lock screen and plays
+             the full adhan — the standard alarm-clock pattern, so no foreground
+             service (and no foreground-service permission) is needed. -->
         <activity
             android:name=".AdhanAlarmActivity"
             android:exported="false"
@@ -55,14 +66,6 @@
             android:showWhenLocked="true"
             android:turnScreenOn="true"
             android:theme="@style/AppTheme.NoActionBarLaunch" />
-
-        <!-- Plays the full adhan via MediaPlayer on the ALARM stream. Started by
-             AdhanReceiver when the exact alarm fires (allowed from a setAlarmClock
-             alarm even on Android 14). Survives screen-off / Doze while it plays. -->
-        <service
-            android:name=".AdhanService"
-            android:exported="false"
-            android:foregroundServiceType="mediaPlayback" />
     </application>
 
     <!-- Permissions -->
@@ -80,10 +83,6 @@
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
     <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
-
-    <!-- Foreground service that plays the full adhan when the alarm fires -->
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
 
     <!-- Location for accurate prayer times + qibla -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />

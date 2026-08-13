@@ -13,18 +13,27 @@ import org.json.JSONObject;
 
 /**
  * Schedules exact, Doze-exempt prayer alarms via AlarmManager.setAlarmClock.
- * Each alarm broadcasts to {@link AdhanReceiver}, which starts the foreground
- * {@link AdhanService} to play the adhan and wake the screen. The schedule is
- * persisted so {@link BootReceiver} can re-arm it after a reboot.
+ * Each alarm broadcasts to {@link AdhanReceiver}, which wakes the screen with
+ * {@link AdhanAlarmActivity} and plays the adhan. The schedule is persisted so
+ * {@link BootReceiver} can re-arm it after a reboot.
+ *
+ * A low-frequency "heal" alarm re-arms the whole schedule every few hours, so
+ * that devices whose power manager quietly drops alarms recover on their own.
  */
 public final class AdhanScheduler {
     static final String PREFS = "SallatyAdhan";
     static final String KEY_ITEMS = "items";
     static final String ACTION_FIRE = "com.selati.app.ADHAN_FIRE";
+    static final String ACTION_HEAL = "com.selati.app.ADHAN_HEAL";
     static final String EXTRA_SOUND = "sound";
     static final String EXTRA_TITLE = "title";
     static final String EXTRA_BODY = "body";
     static final String EXTRA_ID = "id";
+    /** Identifies one firing, so the receiver and the alarm screen share a playback. */
+    static final String EXTRA_KEY = "key";
+
+    /** How often the schedule re-arms itself. Cheap: one wake-up, no CPU. */
+    private static final long HEAL_INTERVAL_MS = 3 * 60 * 60 * 1000L;
 
     private AdhanScheduler() {}
 
@@ -99,5 +108,44 @@ public final class AdhanScheduler {
         String stored = ctx.getSharedPreferences(PREFS, Context.MODE_PRIVATE).getString(KEY_ITEMS, null);
         if (stored == null) return;
         try { scheduleAll(ctx, new JSONArray(stored), false); } catch (JSONException ignored) {}
+    }
+
+    /** Whether a non-empty schedule is currently persisted. */
+    public static boolean hasStoredSchedule(Context ctx) {
+        try {
+            String stored = ctx.getSharedPreferences(PREFS, Context.MODE_PRIVATE).getString(KEY_ITEMS, null);
+            return stored != null && new JSONArray(stored).length() > 0;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    private static PendingIntent healOperation(Context ctx) {
+        Intent i = new Intent(ctx, AdhanReceiver.class).setAction(ACTION_HEAL);
+        return PendingIntent.getBroadcast(ctx, 6999, i, piFlags());
+    }
+
+    /**
+     * Arm the next self-heal. Uses {@code setAndAllowWhileIdle} so it still
+     * fires in Doze, which is exactly when an OEM would have dropped alarms.
+     */
+    public static void armHeal(Context ctx) {
+        AlarmManager am = (AlarmManager) ctx.getSystemService(Context.ALARM_SERVICE);
+        if (am == null) return;
+        long at = System.currentTimeMillis() + HEAL_INTERVAL_MS;
+        try {
+            if (Build.VERSION.SDK_INT >= 23) {
+                am.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, at, healOperation(ctx));
+            } else {
+                am.set(AlarmManager.RTC_WAKEUP, at, healOperation(ctx));
+            }
+        } catch (Exception ignored) {}
+    }
+
+    public static void cancelHeal(Context ctx) {
+        AlarmManager am = (AlarmManager) ctx.getSystemService(Context.ALARM_SERVICE);
+        if (am != null) {
+            try { am.cancel(healOperation(ctx)); } catch (Exception ignored) {}
+        }
     }
 }

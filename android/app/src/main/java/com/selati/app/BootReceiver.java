@@ -9,5 +9,9 @@ public class BootReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         AdhanScheduler.rescheduleFromStore(context);
+        if (AdhanScheduler.hasStoredSchedule(context)) {
+            AdhanScheduler.armHeal(context);
+            NextPrayerNotice.update(context);
+        }
     }
 }

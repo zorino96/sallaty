@@ -1,9 +1,9 @@
 // Prayer-time adhan scheduling + permissions — platform-aware.
 //
 // Android: a custom exact-alarm pipeline (AdhanAlarm plugin → AlarmManager
-// .setAlarmClock → foreground service that wakes the screen and plays the FULL
-// adhan via MediaPlayer). This is the only reliable way to sound the full adhan
-// when the screen is off / app is killed.
+// .setAlarmClock → a broadcast that plays the FULL adhan via MediaPlayer and
+// raises an alarm screen over the lock screen). This is the only reliable way
+// to sound the full adhan when the screen is off / app is killed.
 //
 // iOS: the platform forbids waking the screen or playing scheduled background
 // audio, and caps notification sounds at 30s. So we schedule LocalNotifications

@@ -25,6 +25,28 @@ android/*.iml
 ios/App/Pods/
 ios/App/build/
 ios/DerivedData/
+# Synced web build — `npx cap sync ios` regenerates it, including on CI.
+ios/App/App/public/
+
+# ── shippable binaries: rebuild them, don't version them ──
+*.aab
+*.apk
+*.ipa
+
+# ── generated store artwork: `npm run` regenerates it from the SVGs ──
+store/min/
+store/*.png
+store/ios/*.png
+
+# ── release signing: NEVER commit the key or its passwords ──
+*.jks
+*.keystore
+android/keystore.properties
+# Apple signing material, if it ever lands here
+*.p8
+*.p12
+*.mobileprovision
+*.cer
 
 # ── misc ──
 *.log

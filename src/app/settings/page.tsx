@@ -1,12 +1,14 @@
 'use client';
 
 import Link from 'next/link';
-import { Bell, BookOpenText, Check, ChevronLeft, Languages, LoaderCircle, MapPin, Moon, Play, RefreshCw, Sparkles, Sun, Volume2 } from 'lucide-react';
+import { useEffect, useMemo, useState } from 'react';
+import { Bell, BookOpenText, Building2, Check, ChevronLeft, Languages, LoaderCircle, MapPin, Moon, Play, RefreshCw, Search, Sparkles, Sun, Volume2, X } from 'lucide-react';
 import BottomNav from '@/components/BottomNav';
 import PageHeader from '@/components/PageHeader';
 import { useApp } from '@/lib/AppProvider';
 import { adhanTracks } from '@/data/adhanTracks';
 import { playAdhan, stopAdhan } from '@/lib/adhanPlayer';
+import { storage } from '@/lib/storage';
 import type { Lang, ThemeMode } from '@/lib/types';
 
 type Option<T extends string> = { v: T; label: string; icon?: React.ReactNode };
@@ -14,10 +16,31 @@ type Option<T extends string> = { v: T; label: string; icon?: React.ReactNode };
 export default function SettingsPage() {
   const {
     t, lang, setLang, theme, setTheme, city, coords, geoStatus, refreshLocation,
+    cities, selectedCitySlug, selectCity, bangCityName,
     adhanId, setAdhanId, notifEnabled, notifPerm, enableNotifications, disableNotifications,
   } = useApp();
 
   const notifOn = notifEnabled && notifPerm === 'granted';
+  const [pickerOpen, setPickerOpen] = useState(false);
+  const [query, setQuery] = useState('');
+
+  const filteredCities = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    if (!q) return cities;
+    return cities.filter((c) => c.nameKu.includes(query.trim()) || c.slug.includes(q));
+  }, [cities, query]);
+
+  // The city whose official amozhgary times currently drive the adhan.
+  const activeCityName = geoStatus === 'locating' ? t('locating') : (bangCityName ?? city ?? t('autoByGps'));
+
+  // Opened from the home location bar → jump straight into the city picker.
+  useEffect(() => {
+    if (storage.get('openCityPicker', false)) {
+      storage.remove('openCityPicker');
+      setQuery('');
+      setPickerOpen(true);
+    }
+  }, []);
 
   return (
     <main className="flex min-h-[100dvh] flex-col" style={{ paddingTop: 'max(12px, env(safe-area-inset-top))' }}>
@@ -50,33 +73,7 @@ export default function SettingsPage() {
           </Group>
         </div>
 
-        {/* Location */}
-        <div className="surface flex items-center gap-3 rounded-2xl px-4 py-3.5">
-          <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-gold-500/15 text-gold-600">
-            <MapPin size={20} />
-          </span>
-          <div className="min-w-0 flex-1">
-            <div className="text-[10px] uppercase tracking-[0.3em] text-ink-800/55 dark:text-cream-100/55">
-              {t('locationAuto')}
-            </div>
-            <div className="mt-0.5 truncate font-rabar text-[15px] font-bold leading-tight">
-              {geoStatus === 'locating' ? t('locating') : city ?? t('locationAuto')}
-            </div>
-            <div className="mt-0.5 truncate text-[10.5px] tabular text-ink-800/55 dark:text-cream-100/55" dir="ltr">
-              {coords.lat.toFixed(3)}, {coords.lng.toFixed(3)}
-            </div>
-          </div>
-          <button
-            onClick={refreshLocation}
-            disabled={geoStatus === 'locating'}
-            aria-label={t('refreshLocation')}
-            className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-gold-500 text-white shadow-gold transition active:scale-90 disabled:opacity-60"
-          >
-            {geoStatus === 'locating' ? <LoaderCircle size={16} className="animate-spin" /> : <RefreshCw size={16} />}
-          </button>
-        </div>
-
-        {/* Notifications */}
+        {/* Notifications + the location the adhan is based on */}
         <div className="surface rounded-2xl p-2">
           <Row
             icon={<Bell size={16} />}
@@ -98,6 +95,52 @@ export default function SettingsPage() {
               )
             }
           />
+
+          <Divider />
+
+          {/* The city whose official amozhgary times drive the adhan, with a
+              small button to pick/change it (e.g. when travelling). */}
+          <div className="flex items-center gap-3 rounded-xl px-3 py-2.5">
+            <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-gold-500/15 text-gold-600">
+              <MapPin size={18} />
+            </span>
+            <button
+              onClick={() => { setQuery(''); setPickerOpen(true); }}
+              className="min-w-0 flex-1 text-start"
+            >
+              <div className="text-[10px] uppercase tracking-[0.25em] text-ink-800/55 dark:text-cream-100/55">
+                {t('prayerTimesCity')}
+              </div>
+              <div className="mt-0.5 flex items-center gap-1.5">
+                <span className="truncate font-rabar text-[15px] font-bold leading-tight">{activeCityName}</span>
+                {selectedCitySlug == null && (
+                  <span className="shrink-0 rounded-full bg-gold-500/15 px-1.5 py-0.5 text-[8.5px] font-bold uppercase tracking-wider text-gold-700 dark:text-gold-300">
+                    GPS
+                  </span>
+                )}
+              </div>
+              <div className="mt-0.5 truncate text-[10.5px] tabular text-ink-800/55 dark:text-cream-100/55" dir="ltr">
+                {coords.lat.toFixed(3)}, {coords.lng.toFixed(3)}
+              </div>
+            </button>
+            {/* choose / change city */}
+            <button
+              onClick={() => { setQuery(''); setPickerOpen(true); }}
+              aria-label={t('changeCity')}
+              className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-cream-100 text-gold-600 transition active:scale-90 dark:bg-teal-800 dark:text-gold-300"
+            >
+              <Building2 size={17} />
+            </button>
+            {/* auto-detect via GPS */}
+            <button
+              onClick={refreshLocation}
+              disabled={geoStatus === 'locating'}
+              aria-label={t('refreshLocation')}
+              className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-gold-500 text-white shadow-gold transition active:scale-90 disabled:opacity-60"
+            >
+              {geoStatus === 'locating' ? <LoaderCircle size={16} className="animate-spin" /> : <RefreshCw size={16} />}
+            </button>
+          </div>
         </div>
 
         {/* How to use */}
@@ -205,6 +248,90 @@ export default function SettingsPage() {
 
       <div className="flex-1" />
       <BottomNav />
+
+      {/* City picker — manual override for prayer-time location */}
+      {pickerOpen && (
+        <div
+          className="fixed inset-0 z-[60] flex flex-col justify-end bg-black/45 backdrop-blur-sm"
+          onClick={() => setPickerOpen(false)}
+        >
+          <div
+            className="surface max-h-[80dvh] w-full overflow-hidden rounded-t-3xl border-t border-[var(--line)] shadow-glass"
+            style={{ paddingBottom: 'max(12px, env(safe-area-inset-bottom))' }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between px-5 pt-4 pb-1.5">
+              <div className="font-rabar text-[16px] font-bold">{t('chooseCity')}</div>
+              <button
+                onClick={() => setPickerOpen(false)}
+                aria-label={lang === 'ar' ? 'إغلاق' : 'داخستن'}
+                className="grid h-8 w-8 place-items-center rounded-full bg-cream-100 text-ink-800/70 transition active:scale-90 dark:bg-teal-800 dark:text-cream-100/70"
+              >
+                <X size={16} />
+              </button>
+            </div>
+
+            <p className="px-5 pb-3 text-[11.5px] leading-6 text-ink-800/60 dark:text-cream-100/60">
+              {t('travelHint')}
+            </p>
+
+            <div className="px-5 pb-2">
+              <div className="flex items-center gap-2 rounded-full bg-cream-100 px-3 py-2 dark:bg-teal-800">
+                <Search size={15} className="opacity-50" />
+                <input
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  placeholder={t('searchCity')}
+                  className="w-full bg-transparent text-[13px] outline-none placeholder:text-ink-800/40 dark:placeholder:text-cream-100/40"
+                />
+              </div>
+            </div>
+
+            <div className="overflow-y-auto px-3 pb-3" style={{ maxHeight: '52dvh' }}>
+              {/* auto GPS option */}
+              <button
+                onClick={() => { setPickerOpen(false); void refreshLocation(); }}
+                className={
+                  'mb-1 flex w-full items-center gap-2.5 rounded-xl px-3 py-2.5 text-start transition active:scale-[0.99] ' +
+                  (selectedCitySlug == null ? 'bg-gold-500 text-white shadow-gold' : 'bg-cream-100 dark:bg-teal-800')
+                }
+              >
+                <RefreshCw size={15} className="shrink-0" />
+                <span className="flex-1 truncate text-[13px] font-semibold">{t('autoByGps')}</span>
+                {selectedCitySlug == null && <Check size={15} strokeWidth={3} />}
+              </button>
+
+              {filteredCities.map((c) => {
+                const sel = c.slug === selectedCitySlug;
+                return (
+                  <button
+                    key={c.slug}
+                    onClick={() => {
+                      selectCity(c.slug);
+                      setPickerOpen(false);
+                      if (typeof navigator !== 'undefined' && 'vibrate' in navigator) navigator.vibrate?.(6);
+                    }}
+                    className={
+                      'flex w-full items-center gap-2.5 rounded-xl px-3 py-2.5 text-start transition active:scale-[0.99] ' +
+                      (sel ? 'bg-gold-500 text-white shadow-gold' : 'hover:bg-cream-100 dark:hover:bg-teal-800')
+                    }
+                  >
+                    <MapPin size={14} className="shrink-0 opacity-60" />
+                    <span className="flex-1 truncate font-rabar text-[14px] font-semibold">{c.nameKu}</span>
+                    {sel && <Check size={15} strokeWidth={3} />}
+                  </button>
+                );
+              })}
+
+              {filteredCities.length === 0 && (
+                <div className="py-8 text-center text-[12.5px] text-ink-800/50 dark:text-cream-100/50">
+                  {t('noCityFound')}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </main>
   );
 }

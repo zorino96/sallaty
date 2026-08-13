@@ -11,10 +11,12 @@
     "cap:open": "npx cap open android",
     "android": "next build && npx cap sync android && npx cap run android",
     "apk": "node scripts/build-apk.mjs",
+    "aab": "next build && npx cap sync android && cd android && gradlew.bat bundleRelease",
     "cap:sync:ios": "next build && npx cap sync ios",
     "ios": "next build && npx cap sync ios && npx cap open ios"
   },
   "dependencies": {
+    "@capacitor-community/admob": "^6.2.0",
     "@capacitor/android": "^6.1.0",
     "@capacitor/app": "^6.0.1",
     "@capacitor/core": "^6.1.0",
@@ -37,6 +39,8 @@
     "autoprefixer": "^10.4.20",
     "eslint": "^9.16.0",
     "eslint-config-next": "15.5.18",
+    "ffmpeg-static": "^5.3.0",
+    "playwright": "^1.62.1",
     "postcss": "^8.4.49",
     "tailwindcss": "3.4.19",
     "typescript": "^5.7.2"

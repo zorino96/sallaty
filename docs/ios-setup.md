@@ -74,12 +74,12 @@ The app requests notification permission at runtime (`LocalNotifications.request
 
 | Capability | Android | iOS |
 |---|---|---|
-| Full-length adhan when locked / screen off | ✅ native `AdhanService` (MediaPlayer, USAGE_ALARM) | ❌ notification sound capped at 30s |
+| Full-length adhan when locked / screen off | ✅ native `AdhanSound` (MediaPlayer, USAGE_ALARM) | ❌ notification sound capped at 30s |
 | Wake the screen like an alarm clock | ✅ full-screen intent + `AdhanAlarmActivity` | ❌ not permitted |
 | Exact alarm / Doze exemption / battery-optimization opt-out | ✅ | ❌ concept doesn't exist (and isn't needed) |
 | Re-arm alarms after reboot | ✅ `BootReceiver` | ❌ local notifications persist in the OS scheduler instead |
 
-These Android behaviours live entirely in `android/.../AdhanService.java`, `AdhanReceiver.java`, `AdhanScheduler.java`, and the `AdhanAlarm` plugin — there is **no** iOS equivalent because iOS forbids them. The iOS adhan uses the best the platform allows: a scheduled local notification with a ≤30s sound.
+These Android behaviours live entirely in `android/.../AdhanSound.java`, `AdhanReceiver.java`, `AdhanAlarmActivity.java`, `AdhanScheduler.java`, and the `AdhanAlarm` plugin — there is **no** iOS equivalent because iOS forbids them. The iOS adhan uses the best the platform allows: a scheduled local notification with a ≤30s sound.
 
 ## Repo note
 

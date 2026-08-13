@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import {
-  Activity, Bell, BellOff, BookMarked, BookOpen, CalendarDays, Compass, Flame,
+  Activity, Bell, BellOff, BookMarked, BookOpen, CalendarDays, ChevronLeft, Compass, Flame,
   Gauge, GraduationCap, HandHeart, Heart, Loader2, MapPin, MapPinned,
   ScrollText, Settings, Sparkles,
 } from 'lucide-react';
@@ -15,13 +15,21 @@ import PrayerRow from '@/components/PrayerRow';
 import StarEmblem from '@/components/StarEmblem';
 import { useApp } from '@/lib/AppProvider';
 import { currentPrayer, hijriDate } from '@/lib/prayerTimes';
+import { storage } from '@/lib/storage';
 
 export default function Home() {
   const {
-    t, lang, city, geoStatus, refreshLocation, getTimes, onboarded,
+    t, lang, city, geoStatus, getTimes, onboarded,
     notifEnabled, notifPerm, enableNotifications, disableNotifications,
   } = useApp();
   const router = useRouter();
+
+  // Open the city picker (in Settings) when the location bar is tapped.
+  const goToCityPicker = (): void => {
+    storage.set('openCityPicker', true);
+    if (typeof navigator !== 'undefined' && 'vibrate' in navigator) navigator.vibrate?.(6);
+    router.push('/settings');
+  };
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -125,17 +133,24 @@ export default function Home() {
 
       {/* ── today's five ── */}
       <section className="animate-rise px-5 pt-4" style={{ animationDelay: '230ms' }}>
-        <div className="mb-2 flex items-center justify-between">
+        {/* location selector → opens the city picker in Settings */}
+        <button
+          onClick={goToCityPicker}
+          aria-label={t('chooseCity')}
+          className="surface mb-2.5 flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-start transition active:scale-[0.99]"
+        >
+          <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-gold-500/15 text-gold-600 dark:text-gold-300">
+            {geoStatus === 'locating' ? <Loader2 size={14} className="animate-spin" /> : <MapPin size={14} />}
+          </span>
+          <span className="min-w-0 flex-1">
+            <span className="block truncate font-rabar text-[13px] font-bold leading-tight">{locationLabel}</span>
+            <span className="block truncate text-[10px] font-semibold text-gold-700/85 dark:text-gold-300/85">{t('setLocationHint')}</span>
+          </span>
+          <ChevronLeft size={15} className="shrink-0 opacity-40 rtl:rotate-180" />
+        </button>
+
+        <div className="mb-2">
           <span className="text-[10px] uppercase tracking-kashida text-ink-800/50 dark:text-ivory-100/50">{t('todaysPrayers')}</span>
-          <button
-            onClick={refreshLocation}
-            disabled={geoStatus === 'locating'}
-            aria-label={t('refreshLocation')}
-            className="flex max-w-[200px] items-center gap-1 text-[11px] text-gold-700 transition active:scale-95 disabled:opacity-60 dark:text-gold-300"
-          >
-            {geoStatus === 'locating' ? <Loader2 size={12} className="animate-spin" /> : <MapPin size={12} />}
-            <span className="truncate">{locationLabel}</span>
-          </button>
         </div>
         <div className="space-y-2">
           {(['fajr', 'dhuhr', 'asr', 'maghrib', 'isha'] as const).map((name) => (

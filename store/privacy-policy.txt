@@ -1,0 +1,116 @@
+Privacy Policy — سەڵاتی (Sallaty)
+
+Last updated: 13 August 2026
+
+Sallaty (سەڵاتی) is a prayer-times, Qur'an and adhkar app. This policy explains
+what the app does and does not do with your information.
+
+کورتەی کوردی
+
+سەڵاتی هیچ زانیارییەکی کەسیت کۆناکاتەوە و بۆ هیچ شوێنێک نانێرێت.
+
+- هیچ هەژمارێک (account) پێویست نییە.
+- هیچ سێرڤەرێکی ئێمە نییە — هەموو زانیارییەکان تەنها لەناو مۆبایلەکەی خۆتدا دەمێننەوە.
+- شوێنەکەت (GPS) تەنها لەناو مۆبایلەکەدا بەکاردێت بۆ دیاریکردنی کاتی نوێژ و ئاراستەی قیبلە — بۆ دەرەوە نانێردرێت.
+- ئەگەر ئەپەکە بسڕیتەوە، هەموو زانیارییەکان لەگەڵیدا دەسڕێنەوە.
+- ئەپەکە ڕیکلامی بچووک (Google AdMob) پیشان دەدات لە لاپەڕە ئاساییەکاندا —
+  هەرگیز لەسەر قورئان، قیبلە، یان لەکاتی بانگدا نا. گووگڵ بۆ ڕیکلام
+  ناسنامەی ڕیکلامی ئامێرەکەت بەکاردەهێنێت؛ ئێمە ئەو زانیارییەمان پێناگات.
+
+ملخّص بالعربية
+
+تطبيق سَلاتي لا يجمع أي بيانات شخصية ولا يرسلها إلى أي جهة.
+
+- لا يتطلّب أي حساب.
+- لا نملك أي خادم — تبقى جميع البيانات على هاتفك فقط.
+- يُستخدم موقعك (GPS) داخل الهاتف فقط لتحديد أوقات الصلاة واتجاه القبلة، ولا يُرسل إلى الخارج.
+- عند حذف التطبيق تُحذف جميع البيانات معه.
+
+1. Information we collect
+
+We do not collect any personal data. Sallaty has no user accounts, no
+analytics, and no backend server operated by us. We cannot see who you are or
+how you use the app. The only third-party component is the Google AdMob advert
+SDK, described in section 6.
+
+2. Information stored on your device
+
+The following stays only on your device (in the app's local storage) and is
+never transmitted to us:
+
+- Chosen city / last known coordinates — Calculating prayer times and qibla direction
+- Language, theme, adhan sound, notification settings — Remembering your preferences
+- Qur'an bookmarks and last-read position — Resuming your reading
+- Dhikr counters and congregation-prayer log — Your personal tracking
+
+Deleting the app deletes all of this.
+
+3. Location
+
+If you grant location permission, the app reads your approximate coordinates to
+pick the nearest city's official prayer times and to compute the qibla bearing.
+This happens entirely on the device. Location is never uploaded to us or
+shared with third parties. You may refuse the permission and instead choose your
+city manually — the app works fully either way.
+
+4. Notifications and alarms
+
+The app schedules local alarms so the adhan sounds at each prayer time, including
+when the screen is off. These are local device alarms; no push service and no
+network connection is involved.
+
+5. Network use
+
+The app is designed to work fully offline. Prayer times for the supported
+cities, the Qur'an text, translations and adhan audio are all bundled inside the
+app. The app may optionally contact the public website amozhgary.tv to refresh
+official prayer times for a new year. This request contains no personal data.
+If you open "nearby mosques", the app hands the request to Google Maps, which is
+governed by Google's own privacy policy.
+
+6. Advertising (Google AdMob)
+
+Sallaty shows a small banner advert on ordinary screens, provided by Google AdMob. We deliberately do not show adverts on the Qur'an screens, the
+qibla compass, or while the adhan is sounding.
+
+To serve these adverts, Google AdMob may collect and process:
+
+- your device's advertising identifier
+- approximate location derived from IP address, device type and OS version
+- interaction with the advert (views, taps)
+
+This is handled by Google, not by us — we never receive this data. Google's use
+of it is governed by their own policies:
+
+- Google Privacy Policy: https://policies.google.com/privacy
+- How Google uses data from apps that use its services:
+  https://policies.google.com/technologies/partner-sites
+
+Your choices. In the European Economic Area and the UK the app shows a
+consent form before any personalised advert is served, and you may refuse.
+On any device you can limit or reset the advertising identifier in your system
+settings (Android: Settings → Google → Ads; iOS: *Settings → Privacy &
+Security → Tracking*).
+
+We use no analytics and no other tracking SDKs.
+
+7. Children
+
+The app is rated for ages 13 and over on Google Play. It is not directed at
+children under 13 and we do not knowingly collect information from them.
+
+8. Content attribution
+
+- Official prayer times: amozhgary.tv
+- Adhan recordings: The Adhan — Aaqib Azeez (CC BY-SA 4.0, Wikimedia Commons);
+  Call to prayer — Sabah Fakhri (Creative Commons, Wikimedia Commons);
+  Adhan al-Fajr — Fouad Adan (Public Domain, archive.org)
+
+9. Changes
+
+If this policy changes, the updated version will be published at this same
+address with a new "Last updated" date.
+
+10. Contact
+
+Questions about this policy: zorinonsd@gmail.com

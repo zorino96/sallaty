@@ -111,15 +111,25 @@ export default function GuidePage() {
                   </div>
                   <p className="mt-1.5 whitespace-pre-line text-[13px] leading-7 text-ink-800/70 dark:text-ivory-100/70">{c.b}</p>
                   {s.accent === 'gold' && (
-                    <button
-                      onClick={async () => {
-                        try { await AdhanAlarm.requestBatteryExemption(); } catch { /* ignore */ }
-                        try { await AdhanAlarm.openExactAlarmSettings(); } catch { /* ignore */ }
-                      }}
-                      className="mt-3 rounded-full bg-gradient-to-b from-gold-300 to-gold-600 px-4 py-2 text-[12px] font-bold text-ink-900 shadow-gold transition active:scale-95"
-                    >
-                      {isAr ? 'تفعيل أذان موثوق' : 'چالاککردنی بانگی بەردەوام'}
-                    </button>
+                    <div className="mt-3 flex flex-wrap gap-2">
+                      <button
+                        onClick={async () => {
+                          try { await AdhanAlarm.requestBatteryExemption(); } catch { /* ignore */ }
+                          try { await AdhanAlarm.openExactAlarmSettings(); } catch { /* ignore */ }
+                        }}
+                        className="rounded-full bg-gradient-to-b from-gold-300 to-gold-600 px-4 py-2 text-[12px] font-bold text-ink-900 shadow-gold transition active:scale-95"
+                      >
+                        {isAr ? 'إيقاف تقييد البطارية' : 'لابردنی سنووری باتری'}
+                      </button>
+                      <button
+                        onClick={async () => {
+                          try { await AdhanAlarm.openAutoStartSettings(); } catch { /* ignore */ }
+                        }}
+                        className="rounded-full border border-gold-500/45 bg-gold-500/10 px-4 py-2 text-[12px] font-bold text-gold-700 transition active:scale-95 dark:text-gold-300"
+                      >
+                        {isAr ? 'تفعيل التشغيل التلقائي (Autostart)' : 'چالاککردنی Autostart'}
+                      </button>
+                    </div>
                   )}
                 </div>
               </div>

@@ -84,6 +84,16 @@ body::before {
   z-index: 0;
 }
 
+/* The native AdMob banner overlays the bottom of the webview, so reserve its
+   height (adaptive banner ≈ 50–60dp) or it would cover the bottom navigation.
+   The class is toggled by <AdGate>. */
+body.has-ad {
+  --ad-h: 60px;
+}
+body.has-ad .phone-frame {
+  padding-bottom: var(--ad-h);
+}
+
 @layer components {
   .phone-frame {
     width: 100%;

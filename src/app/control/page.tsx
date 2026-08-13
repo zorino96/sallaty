@@ -246,6 +246,31 @@ export default function ControlPage() {
           )}
         </Section>
 
+        {/* Where the app's content comes from — shown so every source is credited. */}
+        <Section icon={<Database size={16} />} title={lang === 'ar' ? 'المصادر' : 'سەرچاوەکان'}>
+          <div className="space-y-2 px-1 py-1 text-[11px] leading-5 text-ink-800/60 dark:text-cream-100/55">
+            <div>
+              <div className="font-semibold text-ink-800/80 dark:text-cream-100/75">
+                {lang === 'ar' ? 'أوقات الصلاة' : 'کاتەکانی نوێژ'}
+              </div>
+              <div dir="ltr">amozhgary.tv — official published schedule</div>
+            </div>
+            <div>
+              <div className="font-semibold text-ink-800/80 dark:text-cream-100/75">
+                {lang === 'ar' ? 'ترجمة القرآن الكردية' : 'وەرگێڕانی کوردیی قورئان'}
+              </div>
+              <div>تەفسیری ئاسان — بورهان محمد ئەمین</div>
+              <div dir="ltr">Tafsiri Asan — Burhan Muhammad-Amin</div>
+            </div>
+            <div>
+              <div className="font-semibold text-ink-800/80 dark:text-cream-100/75">
+                {lang === 'ar' ? 'النص القرآني' : 'دەقی قورئان'}
+              </div>
+              <div dir="ltr">Uthmani script, Tanzil.net</div>
+            </div>
+          </div>
+        </Section>
+
         <Section icon={<Check size={16} />} title={t('tracking')}>
           <Row label={t('checkInsCount')}   value={String(checkinCount)} />
           <Row label={t('habitsDaysCount')} value={String(habitDays)} />

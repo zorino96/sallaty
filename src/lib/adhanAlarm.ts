@@ -19,6 +19,9 @@ export interface AdhanAlarmPlugin {
   openExactAlarmSettings(): Promise<void>;
   isIgnoringBatteryOptimizations(): Promise<{ value: boolean }>;
   requestBatteryExemption(): Promise<void>;
+  // Opens the OEM auto-start whitelist (MIUI/ColorOS/EMUI…) — required on
+  // aggressive skins or exact alarms fire late.
+  openAutoStartSettings(): Promise<void>;
 }
 
 export const AdhanAlarm = registerPlugin<AdhanAlarmPlugin>('AdhanAlarm');

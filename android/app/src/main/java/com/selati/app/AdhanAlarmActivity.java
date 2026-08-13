@@ -17,19 +17,49 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationManagerCompat;
 
 /**
- * Launched via the service's full-screen intent. Turns the screen on and shows
- * over the lock screen (like an alarm clock), displaying the prayer name with a
- * "silence" button that stops the adhan service.
+ * The alarm screen. Launched by the alarm notification's full-screen intent, it
+ * turns the screen on, shows over the lock screen like an alarm clock, plays
+ * the full adhan ({@link AdhanSound}) and offers a "silence" button.
+ *
+ * Playing here — rather than in a foreground service — is what an alarm clock
+ * does, and needs no foreground-service permission.
  */
 public class AdhanAlarmActivity extends AppCompatActivity {
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         wakeAndShowOverLockscreen();
+        setContentView(buildUi(titleOf(getIntent())));
+        sound(getIntent());
+    }
 
-        String title = getIntent() != null ? getIntent().getStringExtra(AdhanScheduler.EXTRA_TITLE) : null;
-        if (title == null) title = "بانگی نوێژ";
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        setContentView(buildUi(titleOf(intent)));
+        sound(intent);
+    }
 
+    /**
+     * Adopt the adhan for this firing. The receiver has normally started it
+     * already; the shared key makes this a no-op rather than a second, louder
+     * adhan on top of the first.
+     */
+    private void sound(Intent intent) {
+        String s = intent != null ? intent.getStringExtra(AdhanScheduler.EXTRA_SOUND) : "";
+        String key = intent != null ? intent.getStringExtra(AdhanScheduler.EXTRA_KEY) : null;
+        if (key == null) key = titleOf(intent);
+        AdhanSound.start(this, s, key);
+    }
+
+    private static String titleOf(Intent intent) {
+        String t = intent != null ? intent.getStringExtra(AdhanScheduler.EXTRA_TITLE) : null;
+        return t != null ? t : "بانگی نوێژ";
+    }
+
+    private View buildUi(String title) {
         float d = getResources().getDisplayMetrics().density;
         int pad = (int) (24 * d);
 
@@ -60,22 +90,25 @@ public class AdhanAlarmActivity extends AppCompatActivity {
         stop.setBackgroundColor(0xFFE0BC63);
         stop.setOnClickListener(new View.OnClickListener() {
             @Override public void onClick(View v) {
-                // Stop the playing adhan service (it owns the MediaPlayer)…
-                try {
-                    startService(new Intent(AdhanAlarmActivity.this, AdhanService.class)
-                            .setAction(AdhanService.ACTION_STOP));
-                } catch (Exception ignored) {}
-                // …and clear any fallback sounding notification.
+                AdhanSound.stop();
                 NotificationManagerCompat.from(AdhanAlarmActivity.this).cancel(AdhanReceiver.NOTIF_ID);
                 finish();
             }
         });
         root.addView(stop);
 
-        setContentView(root);
+        return root;
+    }
+
+    @Override
+    protected void onDestroy() {
+        // Dismissing the alarm screen silences the adhan, as on any alarm clock.
+        AdhanSound.stop();
+        super.onDestroy();
     }
 
     private void wakeAndShowOverLockscreen() {
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         if (Build.VERSION.SDK_INT >= 27) {
             setShowWhenLocked(true);
             setTurnScreenOn(true);
@@ -85,7 +118,6 @@ public class AdhanAlarmActivity extends AppCompatActivity {
             getWindow().addFlags(
                     WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
                     | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON
-                    | WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
                     | WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
         }
     }
