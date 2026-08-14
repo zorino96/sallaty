@@ -46,12 +46,14 @@ workflows:
           # build dies with "No matching profiles found". `--create` is what
           # actually mints the distribution certificate and the profile — and
           # minting a certificate is why the API key needs the Admin role.
+          #
+          # This step only fetches and unlocks them. Writing them into the Xcode
+          # project happens later, after pod install — see the note there.
           keychain initialize
           app-store-connect fetch-signing-files "$BUNDLE_ID" \
             --type IOS_APP_STORE \
             --create
           keychain add-certificates
-          xcode-project use-profiles
 
       - name: Install npm dependencies
         script: npm ci
@@ -70,6 +72,15 @@ workflows:
           # App Store Connect rejects a build number it has already seen, so we
           # ride Codemagic's own monotonically increasing counter.
           cd ios/App && agvtool new-version -all "$BUILD_NUMBER"
+
+      - name: Apply the signing profile to the Xcode project
+        script: |
+          # This has to come after `cap sync` and `pod install`, not before:
+          # both rewrite the Xcode project and its xcconfigs, and whichever runs
+          # last wins. Applying the profile earlier looked fine in the log and
+          # still ended in `"App" requires a provisioning profile` at archive
+          # time, because the settings had been overwritten in between.
+          xcode-project use-profiles
 
       - name: Build the IPA
         script: |
