@@ -13,7 +13,12 @@
 #  3. Codemagic → Teams → Integrations → Developer Portal → add that key and
 #     name it exactly `sallaty-appstore-admin` (or change the name in both
 #     places marked below).
-# The private key is deliberately NOT stored in this repository.
+#  4. Generate an RSA key (`openssl genrsa -out certificate_private_key.pem
+#     2048`) and add its contents to this app's environment variables as a
+#     SECURE variable named CERTIFICATE_PRIVATE_KEY, in group `appstore`.
+#     Apple issues a certificate around a private key you supply; reusing one
+#     key across builds is what stops every build minting a new certificate.
+# Neither private key is stored in this repository.
 
 workflows:
   ios-appstore:
@@ -25,6 +30,8 @@ workflows:
       node: 20
       xcode: latest
       cocoapods: default
+      groups:
+        - appstore          # supplies the secure CERTIFICATE_PRIVATE_KEY
       vars:
         XCODE_WORKSPACE: ios/App/App.xcworkspace
         XCODE_SCHEME: App
@@ -49,9 +56,18 @@ workflows:
           #
           # This step only fetches and unlocks them. Writing them into the Xcode
           # project happens later, after pod install — see the note there.
+          #
+          # --certificate-key is not optional: a certificate is a public key
+          # signed by Apple, so the tool needs a private key to build one
+          # around. Without it the command prints "Cannot save Signing
+          # Certificates without certificate private key" and creates nothing.
+          # Keeping the SAME key in an environment variable across builds is
+          # what makes this repeatable — a key generated per build would mint a
+          # fresh certificate every time and hit Apple's per-account limit.
           keychain initialize
           app-store-connect fetch-signing-files "$BUNDLE_ID" \
             --type IOS_APP_STORE \
+            --certificate-key "@env:CERTIFICATE_PRIVATE_KEY" \
             --create
           keychain add-certificates
 
