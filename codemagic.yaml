@@ -25,12 +25,10 @@ workflows:
       node: 20
       xcode: latest
       cocoapods: default
-      ios_signing:
-        distribution_type: app_store
-        bundle_identifier: com.selati.app
       vars:
         XCODE_WORKSPACE: ios/App/App.xcworkspace
         XCODE_SCHEME: App
+        BUNDLE_ID: com.selati.app
 
     integrations:
       app_store_connect: sallaty-appstore-admin   # ← must match the key name in Codemagic
@@ -41,6 +39,20 @@ workflows:
       events: []
 
     scripts:
+      - name: Create the signing certificate and provisioning profile
+        script: |
+          # The `ios_signing` environment block only *looks up* profiles that
+          # already exist; on a brand-new Apple account there are none, and the
+          # build dies with "No matching profiles found". `--create` is what
+          # actually mints the distribution certificate and the profile — and
+          # minting a certificate is why the API key needs the Admin role.
+          keychain initialize
+          app-store-connect fetch-signing-files "$BUNDLE_ID" \
+            --type IOS_APP_STORE \
+            --create
+          keychain add-certificates
+          xcode-project use-profiles
+
       - name: Install npm dependencies
         script: npm ci
 
@@ -59,9 +71,8 @@ workflows:
           # ride Codemagic's own monotonically increasing counter.
           cd ios/App && agvtool new-version -all "$BUILD_NUMBER"
 
-      - name: Fetch signing profiles and build the IPA
+      - name: Build the IPA
         script: |
-          xcode-project use-profiles
           xcode-project build-ipa \
             --workspace "$XCODE_WORKSPACE" \
             --scheme "$XCODE_SCHEME"
