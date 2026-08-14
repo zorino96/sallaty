@@ -6,10 +6,13 @@
 # ── One-time setup in the Codemagic UI (cannot be done from this repo) ──
 #  1. Connect this repository to Codemagic.
 #  2. App Store Connect → Users and Access → Integrations → create an API key
-#     with the "App Manager" role, and download its .p8 (downloadable ONCE).
+#     with the **Admin** role, and download its .p8 (downloadable ONCE).
+#     Admin, not App Manager: this account had no distribution certificate, and
+#     creating one through Apple's API is an Admin-only operation. App Manager
+#     is enough afterwards, but not to bootstrap.
 #  3. Codemagic → Teams → Integrations → Developer Portal → add that key and
-#     name it exactly `sallaty-appstore` (or change the name in both places
-#     marked below).
+#     name it exactly `sallaty-appstore-admin` (or change the name in both
+#     places marked below).
 # The private key is deliberately NOT stored in this repository.
 
 workflows:
@@ -30,7 +33,7 @@ workflows:
         XCODE_SCHEME: App
 
     integrations:
-      app_store_connect: sallaty-appstore   # ← must match the key name in Codemagic
+      app_store_connect: sallaty-appstore-admin   # ← must match the key name in Codemagic
 
     triggering:
       # Manual only. Prayer-time data changes land on main far more often than
