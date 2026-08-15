@@ -21,7 +21,7 @@ export default function BottomNav() {
 
   return (
     <nav
-      className="glass sticky bottom-0 z-30 mx-auto mt-3 mb-3 w-[92%] max-w-[412px] rounded-[26px] px-2.5 pt-2"
+      className="bottom-nav glass sticky z-30 mx-auto mt-3 mb-3 w-[92%] max-w-[412px] rounded-[26px] px-2.5 pt-2"
       style={{ paddingBottom: 'max(8px, env(safe-area-inset-bottom))' }}
     >
       <ul className="flex items-end justify-between">

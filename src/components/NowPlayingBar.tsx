@@ -19,7 +19,7 @@ export default function NowPlayingBar() {
   return (
     <div
       className="pointer-events-none fixed inset-x-0 z-50 flex justify-center"
-      style={{ bottom: 'calc(env(safe-area-inset-bottom) + 76px)' }}
+      style={{ bottom: 'calc(env(safe-area-inset-bottom) + 76px + var(--ad-h))' }}
     >
       <button
         onClick={stopAdhan}

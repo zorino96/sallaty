@@ -98,7 +98,10 @@ export function useApp(): AppCtx {
 export function AppProvider({ children }: { children: React.ReactNode }) {
   const [ready, setReady] = useState(false);
   const [lang, setLangState] = useState<Lang>('ku');
-  const [theme, setThemeState] = useState<ThemeMode>('auto');
+  // Light by default. 'auto' followed the phone, and most phones here sit in
+  // dark mode, so first-run users met a dark app that is not how it is meant to
+  // be seen. They can still pick dark or auto in Settings.
+  const [theme, setThemeState] = useState<ThemeMode>('light');
   const [coords, setCoords] = useState<Coords>(DEFAULT_COORDS);
   const [city, setCity] = useState<string | undefined>(undefined);
   const [geoStatus, setGeoStatus] = useState<GeoStatus>('idle');
@@ -121,7 +124,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   // Hydrate from localStorage on first mount.
   useEffect(() => {
     setLangState(storage.get<Lang>('lang', 'ku'));
-    setThemeState(storage.get<ThemeMode>('theme', 'auto'));
+    setThemeState(storage.get<ThemeMode>('theme', 'light'));
     setCoords(storage.get<Coords>('coords', DEFAULT_COORDS));
     setCity(storage.get<string | undefined>('city', undefined));
     setSelectedCitySlug(storage.get<string | null>('selectedCity', null));

@@ -84,14 +84,25 @@ body::before {
   z-index: 0;
 }
 
-/* The native AdMob banner overlays the bottom of the webview, so reserve its
-   height (adaptive banner ≈ 50–60dp) or it would cover the bottom navigation.
-   The class is toggled by <AdGate>. */
+/* The native AdMob banner overlays the bottom of the webview — it is not part
+   of the page, so nothing reflows around it. Everything anchored to the bottom
+   has to be lifted by its height by hand.
+   `--ad-h` is 0 when no banner is showing, so the same expressions work either
+   way; <AdGate> toggles the class. */
+body {
+  --ad-h: 0px;
+}
 body.has-ad {
-  --ad-h: 60px;
+  --ad-h: 60px; /* adaptive banner ≈ 50pt, plus headroom */
 }
 body.has-ad .phone-frame {
   padding-bottom: var(--ad-h);
+}
+/* The nav is `sticky bottom-0`: padding on its container does NOT move it,
+   because sticky positions against the scrollport, not the padding box. Left
+   at 0 it sits underneath the banner and swallows every tap. */
+.bottom-nav {
+  bottom: var(--ad-h);
 }
 
 @layer components {
