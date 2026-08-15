@@ -93,7 +93,11 @@ body {
   --ad-h: 0px;
 }
 body.has-ad {
-  --ad-h: 60px; /* adaptive banner ≈ 50pt, plus headroom */
+  /* Banner (adaptive ≈ 50pt) plus a deliberate gap. Sized flush to the banner,
+     the nav's bottom edge touched the advert's top edge: a thumb reaching for a
+     tab and overshooting by a few pixels opened an advert instead. That is a
+     bad tap for the user and an invalid click for the AdMob account. */
+  --ad-h: 74px;
 }
 body.has-ad .phone-frame {
   padding-bottom: var(--ad-h);
