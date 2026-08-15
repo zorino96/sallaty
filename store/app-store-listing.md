@@ -69,7 +69,7 @@ Morning and evening adhkar, the adhkar after prayer, and a tap counter for dhikr
 BUILT FOR PRIVACY
 No account. No servers of ours. Nothing you do in the app leaves your phone, and deleting the app deletes everything with it. The Qur'an text, the translations, the prayer times and the adhan recordings are all bundled inside the app, so it works with no connection at all.
 
-Small banner adverts appear on ordinary screens. They are deliberately never shown on the Qur'an screens, the qibla compass, or while the adhan is sounding.
+A small banner advert sits at the bottom of the screen, below the navigation bar. It is always a banner — never a full-screen or interrupting format, and it never covers what you are reading. No advert is shown while the adhan is sounding.
 
 CONTENT SOURCES
 Prayer times: amozhgary.tv
@@ -129,7 +129,7 @@ First release of Sallaty on iPhone.
 الخصوصية أولًا
 لا حساب، ولا خوادم لنا. لا يغادر شيء مما تفعله في التطبيق هاتفك، وحذف التطبيق يحذف كل شيء معه. النص القرآني والترجمات والمواقيت وتسجيلات الأذان كلها مضمّنة داخل التطبيق، فيعمل دون أي اتصال.
 
-تظهر إعلانات بانر صغيرة في الشاشات العادية، ولا تظهر أبدًا في شاشات القرآن ولا بوصلة القبلة ولا أثناء رفع الأذان.
+يظهر إعلان بانر صغير أسفل الشاشة، تحت شريط التنقّل. وهو دائمًا بانر — لا إعلانات ملء الشاشة ولا مقاطعة، ولا يغطي ما تقرأه. ولا يظهر أي إعلان أثناء رفع الأذان.
 ```
 
 ---

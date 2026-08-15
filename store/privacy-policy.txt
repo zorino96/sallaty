@@ -13,8 +13,9 @@ what the app does and does not do with your information.
 - هیچ سێرڤەرێکی ئێمە نییە — هەموو زانیارییەکان تەنها لەناو مۆبایلەکەی خۆتدا دەمێننەوە.
 - شوێنەکەت (GPS) تەنها لەناو مۆبایلەکەدا بەکاردێت بۆ دیاریکردنی کاتی نوێژ و ئاراستەی قیبلە — بۆ دەرەوە نانێردرێت.
 - ئەگەر ئەپەکە بسڕیتەوە، هەموو زانیارییەکان لەگەڵیدا دەسڕێنەوە.
-- ئەپەکە ڕیکلامی بچووک (Google AdMob) پیشان دەدات لە لاپەڕە ئاساییەکاندا —
-  هەرگیز لەسەر قورئان، قیبلە، یان لەکاتی بانگدا نا. گووگڵ بۆ ڕیکلام
+- ئەپەکە ڕیکلامی بچووکی بانەر (Google AdMob) پیشان دەدات لە خوارەوەی شاشەکەدا —
+  هەرگیز بە شێوەی تەواوپەڕە یان پچڕێنەر، و هەرگیز ناوەڕۆک دانانوقێنێت.
+  لەکاتی بانگدا هیچ ڕیکلامێک پیشان نادرێت. گووگڵ بۆ ڕیکلام
   ناسنامەی ڕیکلامی ئامێرەکەت بەکاردەهێنێت؛ ئێمە ئەو زانیارییەمان پێناگات.
 
 ملخّص بالعربية
@@ -25,6 +26,9 @@ what the app does and does not do with your information.
 - لا نملك أي خادم — تبقى جميع البيانات على هاتفك فقط.
 - يُستخدم موقعك (GPS) داخل الهاتف فقط لتحديد أوقات الصلاة واتجاه القبلة، ولا يُرسل إلى الخارج.
 - عند حذف التطبيق تُحذف جميع البيانات معه.
+- يعرض التطبيق إعلان بانر صغيرًا (Google AdMob) أسفل الشاشة — ولا يعرض أبدًا
+  إعلانات ملء الشاشة أو مقاطعة، ولا يغطي المحتوى. ولا يظهر أي إعلان أثناء
+  رفع الأذان. تستخدم جوجل معرّف الإعلان الخاص بجهازك؛ ولا تصلنا تلك البيانات.
 
 1. Information we collect
 
@@ -70,8 +74,10 @@ governed by Google's own privacy policy.
 
 6. Advertising (Google AdMob)
 
-Sallaty shows a small banner advert on ordinary screens, provided by Google AdMob. We deliberately do not show adverts on the Qur'an screens, the
-qibla compass, or while the adhan is sounding.
+Sallaty shows a small banner advert at the bottom of the screen, provided by
+Google AdMob. It is always a banner - never a full-screen or interstitial
+format, and never anything that covers content or interrupts what you are
+doing. No advert is shown while the adhan is sounding.
 
 To serve these adverts, Google AdMob may collect and process:
 

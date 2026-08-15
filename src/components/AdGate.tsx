@@ -6,27 +6,19 @@ import { hideBanner, showBanner } from '@/lib/ads';
 import { nowPlaying, subscribePlayback } from '@/lib/adhanPlayer';
 
 /**
- * Where a banner may NEVER appear. The rule we hold ourselves to: no advert
- * beside revealed text, remembrance of God, or an act of worship in progress.
+ * Where a banner may never appear.
  *
- *   /quran     — the Qur'an itself (reader, search, bookmarks)
- *   /adhkar    — morning/evening adhkār
- *   /azkar     — situational adhkār
- *   /dhikr     — the dhikr counter (worship in progress)
- *   /learn     — how to pray, step by step
- *   /qibla     — facing the Kaaba
- *   /guide, /onboarding — first-run flow, must stay clean
+ *   /guide, /onboarding — the first-run flow, which must stay clean
  *
- * Everything else (home, calendar, habits, mosques, settings, articles) shows a
- * single small bottom banner — never a full-screen or interrupting format.
+ * Every other screen shows one small banner pinned below the navigation bar —
+ * never a full-screen, interstitial or interrupting format, and never anything
+ * that covers content. The bar is lifted clear of it (see --ad-h in
+ * globals.css) so no tap ever lands on an advert by accident.
+ *
+ * The adhan is still protected: while it is sounding, every banner is hidden
+ * app-wide, whatever screen the user is on.
  */
 const AD_FREE = [
-  '/quran',
-  '/adhkar',
-  '/azkar',
-  '/dhikr',
-  '/learn',
-  '/qibla',
   '/guide',
   '/onboarding',
 ];
