@@ -31,7 +31,7 @@ Upload it somewhere Apple can reach (an unlisted YouTube link is fine) and put t
 
 State exactly what was tested; do not invent coverage. Format:
 
-> Tested on iPhone <model>, iOS <version>, via TestFlight build 6 (1.0).
+> Tested on iPhone <model>, iOS <version>, via TestFlight build 8 (1.0).
 
 ## 3. What the app does and who it is for
 
@@ -65,9 +65,11 @@ State exactly what was tested; do not invent coverage. Format:
 > The app is designed to run fully offline; the Qur'an text, translations, prayer-time tables and
 > adhan recordings are all bundled in the binary.
 >
-> - **Google AdMob** — small banner adverts on ordinary screens. They are deliberately not shown on
->   the Qur'an screens, the qibla compass, or while the adhan is sounding. The app does not request
->   App Tracking Transparency, so adverts are non-personalised.
+> - **Google AdMob** — one small banner pinned to the bottom of the screen. The navigation bar sits
+>   above it, lifted clear, so no tap can land on an advert by accident. It is always a banner —
+>   never a full-screen or interstitial format — and it never covers content. No advert is shown
+>   while the adhan is sounding. The app does not request App Tracking Transparency, so adverts are
+>   non-personalised.
 > - **amozhgary.tv** — the published source of the official prayer-time tables. The tables are
 >   bundled; the app may optionally contact the site to refresh times for a new year. The request
 >   carries no personal data.
