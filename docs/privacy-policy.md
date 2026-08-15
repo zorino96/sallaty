@@ -1,6 +1,10 @@
 # Privacy Policy — سەڵاتی (Sallaty)
 
-**Last updated: 13 August 2026**
+**Last updated: 16 August 2026**
+
+> Published at <https://zorino96.github.io/sallaty/>, from `docs/index.html`.
+> Keep the two in step: this file is the readable source, that one is what the
+> stores and users actually see.
 
 Sallaty (سەڵاتی) is a prayer-times, Qur'an and adhkar app. This policy explains
 what the app does and does not do with your information.
@@ -75,8 +79,8 @@ The app is designed to work **fully offline**. Prayer times for the supported
 cities, the Qur'an text, translations and adhan audio are all bundled inside the
 app. The app may optionally contact the public website **amozhgary.tv** to refresh
 official prayer times for a new year. This request contains no personal data.
-If you open "nearby mosques", the app hands the request to Google Maps, which is
-governed by Google's own privacy policy.
+If you open "nearby mosques", the app hands the request to your maps app, which
+is governed by its own privacy policy.
 
 ## 6. Advertising (Google AdMob)
 
@@ -108,12 +112,15 @@ We use **no analytics and no other tracking SDKs**.
 
 ## 7. Children
 
-The app is rated for ages 13 and over on Google Play. It is not directed at
-children under 13 and we do not knowingly collect information from them.
+The app is rated 4+ on the App Store and for ages 13 and over on Google Play.
+It is not directed at children under 13 and we do not knowingly collect
+information from them.
 
 ## 8. Content attribution
 
 - Official prayer times: **amozhgary.tv**
+- Kurdish translation: *Tafsiri Asan* — Burhan Muhammad-Amin
+- Uthmani Qur'an text: **Tanzil.net**
 - Adhan recordings: *The Adhan* — Aaqib Azeez (CC BY-SA 4.0, Wikimedia Commons);
   *Call to prayer* — Sabah Fakhri (Creative Commons, Wikimedia Commons);
   *Adhan al-Fajr* — Fouad Adan (Public Domain, archive.org)

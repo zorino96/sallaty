@@ -17,8 +17,8 @@ Bundle ID: **`com.selati.app`** · Version **1.0.1** · iPhone only · Portrait 
 | Primary language | English (U.S.) |
 | Category — primary | Reference |
 | Category — secondary | Lifestyle |
-| Privacy Policy URL | https://sites.google.com/view/sallaty-privacy |
-| Support URL | https://sites.google.com/view/sallaty-privacy |
+| Privacy Policy URL | https://zorino96.github.io/sallaty/ |
+| Support URL | https://zorino96.github.io/sallaty/ |
 | Copyright | 2026 Sallaty |
 | Age rating | **4+** — see the note at the bottom |
 | Price | Free |
