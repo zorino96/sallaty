@@ -64,5 +64,11 @@
 	<string>بۆ دیاریکردنی کاتی نوێژ و ئاراستەی قیبلە بەپێی شوێنەکەت. لتحديد أوقات الصلاة واتجاه القبلة حسب موقعك.</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 	<string>بۆ دیاریکردنی کاتی نوێژ و ئاراستەی قیبلە بەپێی شوێنەکەت. لتحديد أوقات الصلاة واتجاه القبلة حسب موقعك.</string>
+	<!-- Motion: the qibla compass reads the magnetometer through the web layer's
+	     deviceorientation event. iOS requires this string before it will hand
+	     over motion data, and DeviceMotionPermission.swift supplies the WKWebView
+	     half of the same permission. -->
+	<key>NSMotionUsageDescription</key>
+	<string>بۆ ئەوەی قیبلەنما ئاراستەی کەعبە نیشان بدات. لتُظهر بوصلة القبلة اتجاه الكعبة.</string>
 </dict>
 </plist>

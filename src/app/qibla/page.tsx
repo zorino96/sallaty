@@ -226,8 +226,10 @@ export default function QiblaPage() {
             <MapPin size={12} />
             {perm === 'needed' ? (
               // Not a button any more: the next tap anywhere grants the compass
-              // permission, so this is only a hint that a touch is expected.
-              <span className="opacity-70">{t('calibrate')}</span>
+              // permission, so say that. "Rotate the device to calibrate" is
+              // advice for a compass that is already running, and following it
+              // here gets the user nowhere.
+              <span>{t('tapForCompass')}</span>
             ) : perm === 'denied' ? (
               <span className="opacity-70">{t('locationDenied')}</span>
             ) : heading == null ? (
