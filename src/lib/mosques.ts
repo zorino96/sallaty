@@ -21,6 +21,7 @@ const ENDPOINTS = [
 ];
 
 const CACHE_TTL_MS = 7 * 24 * 60 * 60 * 1000;
+const PER_ENDPOINT_TIMEOUT_MS = 12_000;
 
 function cacheKey(c: Coords, radiusKm: number): string {
   return `mosques.${c.lat.toFixed(2)}.${c.lng.toFixed(2)}.${radiusKm}`;
@@ -79,11 +80,18 @@ export async function findNearbyMosques(
 
   let lastError: unknown;
   for (const endpoint of ENDPOINTS) {
+    // Overpass mirrors queue rather than refuse when busy, so a request can sit
+    // open for the full server-side timeout. Three of those in a row is over a
+    // minute of a blank list, which is long enough that people leave the screen
+    // before it ever answers. Give up on a slow mirror and try the next.
+    const abort = new AbortController();
+    const giveUp = setTimeout(() => abort.abort(), PER_ENDPOINT_TIMEOUT_MS);
     try {
       const res = await fetch(endpoint, {
         method: 'POST',
         body: query,
         headers: { 'Content-Type': 'text/plain;charset=UTF-8' },
+        signal: abort.signal,
       });
       if (!res.ok) {
         lastError = new Error(`HTTP ${res.status}`);
@@ -95,14 +103,19 @@ export async function findNearbyMosques(
       return withDistances(mosques, origin).slice(0, limit);
     } catch (err) {
       lastError = err;
+    } finally {
+      clearTimeout(giveUp);
     }
   }
   throw lastError ?? new Error('All Overpass endpoints failed');
 }
 
 export function mosqueMapsUrl(m: Mosque): string {
-  const label = encodeURIComponent(m.name || m.nameAr || 'Mosque');
-  return `https://www.google.com/maps/search/?api=1&query=${m.lat},${m.lng}(${label})`;
+  // `query` must be the coordinates alone. The `lat,lng(Label)` form is a geo:
+  // URI convention, not a Maps one — Maps takes the whole string as free text,
+  // searches for a place literally named "35.56,45.42(مزگەوتی نالی)", and
+  // reports that it cannot find it. Which is exactly what it did.
+  return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${m.lat},${m.lng}`)}`;
 }
 
 // Open Google Maps centered on the user with live "mosque" search results.

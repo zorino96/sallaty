@@ -8,6 +8,7 @@ import PageHeader from '@/components/PageHeader';
 import { useApp } from '@/lib/AppProvider';
 import { SURAHS, TOTAL_AYAHS, surahById, type Surah } from '@/data/quran/surahs';
 import { arabicNumber } from '@/lib/quran';
+import { normalizeArabic } from '@/lib/quranSearch';
 import { getLastRead, type LastRead } from '@/lib/bookmarks';
 
 export default function QuranIndexPage() {
@@ -20,14 +21,22 @@ export default function QuranIndexPage() {
   useEffect(() => { setLastReadState(getLastRead()); }, []);
   const lastSurah = lastRead ? surahById(lastRead.s) : undefined;
 
+  // The stored names carry full diacritics — "سُورَةُ ٱلْفَاتِحَةِ", with an alef
+  // wasla at that. A raw `includes` against them means typing the name the way
+  // anyone actually types it, "الفاتحة", matches nothing at all: every Arabic
+  // and Kurdish query fell through to zero results and only the Latin
+  // transliteration worked. Fold both sides the same way the ayah search
+  // already does.
   const filtered: Surah[] = useMemo(() => {
-    const q = query.trim().toLowerCase();
-    if (!q) return SURAHS;
+    const raw = query.trim();
+    if (!raw) return SURAHS;
+    const q = raw.toLowerCase();
+    const qNorm = normalizeArabic(raw);
     return SURAHS.filter((s) => {
       const num = String(s.n);
       return (
         num.startsWith(q) ||
-        s.name.includes(query.trim()) ||
+        (qNorm.length > 0 && normalizeArabic(s.name).includes(qNorm)) ||
         s.tr.toLowerCase().includes(q) ||
         s.trEn.toLowerCase().includes(q)
       );
@@ -130,8 +139,8 @@ export default function QuranIndexPage() {
           </Link>
         ))}
         {filtered.length === 0 && (
-          <div className="surface rounded-2xl p-6 text-center text-sm text-ink-800/55 dark:text-cream-100/55">
-            —
+          <div className="surface rounded-2xl p-6 text-center text-[13px] text-ink-800/55 dark:text-cream-100/55">
+            {t('noResults')}
           </div>
         )}
       </section>

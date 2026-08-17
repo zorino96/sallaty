@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { ExternalLink, LoaderCircle, MapPin, MapPinned, Navigation, RefreshCw } from 'lucide-react';
 import BottomNav from '@/components/BottomNav';
 import PageHeader from '@/components/PageHeader';
@@ -15,25 +15,35 @@ function vibrate(p: number | number[]): void {
 export default function MosquesPage() {
   const { t, lang, coords, city, geoStatus, refreshLocation } = useApp();
   const [mosques, setMosques] = useState<Mosque[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [state, setState] = useState<'loading' | 'ready' | 'error'>('loading');
   const [justChecked, setJustChecked] = useState<string | null>(null);
+  // Which lookup is the current one. Opening this screen fires a search against
+  // whatever coordinates are known, then the location fix lands and fires a
+  // second — and Overpass answers in whatever order it likes. Without this the
+  // slower, staler reply could arrive last and overwrite the good list with the
+  // wrong one, which is how a first visit ends up showing nothing while a
+  // second visit reads it straight from the cache and looks fine.
+  const currentRequest = useRef(0);
 
   // Ask for a fresh fix on first open if we've never located the user.
   useEffect(() => {
     if (geoStatus === 'idle') void refreshLocation();
   }, [geoStatus, refreshLocation]);
 
-  // Best-effort nearby list (Overpass). Never blocks the page; failures are silent
-  // because the Google-Maps button below always works regardless.
+  // Best-effort nearby list (Overpass). Never blocks the page — the Google-Maps
+  // button above works regardless — but it does say what it is doing.
   const loadList = useCallback(async () => {
-    setLoading(true);
+    const request = ++currentRequest.current;
+    setState('loading');
     try {
       const found = await findNearbyMosques(coords, 8, 25);
+      if (request !== currentRequest.current) return;
       setMosques(found);
+      setState('ready');
     } catch {
+      if (request !== currentRequest.current) return;
       setMosques([]);
-    } finally {
-      setLoading(false);
+      setState('error');
     }
   }, [coords]);
 
@@ -110,15 +120,37 @@ export default function MosquesPage() {
           </p>
         )}
 
-        {/* Bonus: nearby mosque list (shows only if Overpass returned results) */}
-        {(loading || mosques.length > 0) && (
-          <div className="pt-1">
-            <div className="flex items-center justify-between px-1 pb-1.5">
-              <span className="text-[10px] uppercase tracking-[0.2em] text-ink-800/55 dark:text-cream-100/55">
-                {t('nearbyList')}
-              </span>
-              {loading && <LoaderCircle size={12} className="animate-spin opacity-60" />}
+        {/* Nearby mosque list. Every outcome says something: an Overpass lookup
+            can take a while, and a screen that stays blank while it works reads
+            as broken rather than busy. */}
+        <div className="pt-1">
+          <div className="flex items-center justify-between px-1 pb-1.5">
+            <span className="text-[10px] uppercase tracking-[0.2em] text-ink-800/55 dark:text-cream-100/55">
+              {t('nearbyList')}
+            </span>
+            {state === 'loading' && <LoaderCircle size={12} className="animate-spin opacity-60" />}
+          </div>
+
+          {state === 'loading' ? (
+            <div className="surface flex items-center justify-center gap-2 rounded-2xl px-4 py-5 text-[12.5px] text-ink-800/60 dark:text-cream-100/60">
+              <LoaderCircle size={14} className="animate-spin opacity-70" />
+              {t('loadingMosques')}
             </div>
+          ) : state === 'error' ? (
+            <div className="surface flex flex-col items-center gap-2.5 rounded-2xl px-4 py-5">
+              <span className="text-[12.5px] text-ink-800/60 dark:text-cream-100/60">{t('mosquesError')}</span>
+              <button
+                onClick={() => { void loadList(); vibrate(6); }}
+                className="rounded-full bg-gold-500 px-4 py-1.5 text-[11.5px] font-semibold text-white shadow-gold transition active:scale-95"
+              >
+                {t('retry')}
+              </button>
+            </div>
+          ) : mosques.length === 0 ? (
+            <div className="surface flex items-center justify-center rounded-2xl px-4 py-5 text-[12.5px] text-ink-800/60 dark:text-cream-100/60">
+              {t('noMosquesFound')}
+            </div>
+          ) : (
             <div className="space-y-2">
               {mosques.slice(0, 20).map((m) => {
                 const display =
@@ -158,8 +190,8 @@ export default function MosquesPage() {
                 );
               })}
             </div>
-          </div>
-        )}
+          )}
+        </div>
       </section>
 
       <div className="flex-1" />
