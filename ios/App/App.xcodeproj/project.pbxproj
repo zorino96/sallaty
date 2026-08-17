@@ -17,7 +17,6 @@
 		A084ECDBA7D38E1E42DFC39D /* Pods_App.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AF277DCFFFF123FFC6DF26C7 /* Pods_App.framework */; };
 		5A11A7000000000000000021 /* adhan_aqib.caf in Resources */ = {isa = PBXBuildFile; fileRef = 5A11A7000000000000000011 /* adhan_aqib.caf */; };
 		5A11A7000000000000000022 /* adhan_egypt.caf in Resources */ = {isa = PBXBuildFile; fileRef = 5A11A7000000000000000012 /* adhan_egypt.caf */; };
-		5A11A7000000000000000023 /* adhan_fakhry.caf in Resources */ = {isa = PBXBuildFile; fileRef = 5A11A7000000000000000013 /* adhan_fakhry.caf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -35,7 +34,6 @@
 		FC68EB0AF532CFC21C3344DD /* Pods-App.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-App.debug.xcconfig"; path = "Pods/Target Support Files/Pods-App/Pods-App.debug.xcconfig"; sourceTree = "<group>"; };
 		5A11A7000000000000000011 /* adhan_aqib.caf */ = {isa = PBXFileReference; lastKnownFileType = file; path = adhan_aqib.caf; sourceTree = "<group>"; };
 		5A11A7000000000000000012 /* adhan_egypt.caf */ = {isa = PBXFileReference; lastKnownFileType = file; path = adhan_egypt.caf; sourceTree = "<group>"; };
-		5A11A7000000000000000013 /* adhan_fakhry.caf */ = {isa = PBXFileReference; lastKnownFileType = file; path = adhan_fakhry.caf; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -97,7 +95,6 @@
 			children = (
 				5A11A7000000000000000011 /* adhan_aqib.caf */,
 				5A11A7000000000000000012 /* adhan_egypt.caf */,
-				5A11A7000000000000000013 /* adhan_fakhry.caf */,
 			);
 			path = Sounds;
 			sourceTree = "<group>";
@@ -182,7 +179,6 @@
 				2FAD9763203C412B000D30F8 /* config.xml in Resources */,
 				5A11A7000000000000000021 /* adhan_aqib.caf in Resources */,
 				5A11A7000000000000000022 /* adhan_egypt.caf in Resources */,
-				5A11A7000000000000000023 /* adhan_fakhry.caf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

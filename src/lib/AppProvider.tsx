@@ -21,6 +21,7 @@ import {
   requestNotifPermission,
   schedulePrayerNotifications,
 } from './notifications';
+import { defaultAdhanId, resolveAdhanId } from '@/data/adhanTracks';
 import {
   ZERO_ADJUSTMENTS,
   type Adjustments,
@@ -111,7 +112,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const [method, setMethodState] = useState<CalcMethodId>('MuslimWorldLeague');
   const [madhab, setMadhabState] = useState<'shafi' | 'hanafi'>('shafi');
   const [adjustments, setAdjustments] = useState<Adjustments>(ZERO_ADJUSTMENTS);
-  const [adhanId, setAdhanIdState] = useState('adhan-aqib');
+  const [adhanId, setAdhanIdState] = useState(defaultAdhanId);
   const [notifEnabled, setNotifEnabled] = useState(false);
   const [notifPerm, setNotifPerm] = useState<NotifPerm>('default');
 
@@ -132,7 +133,11 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     setMethodState(storage.get<CalcMethodId>('method', 'Karachi'));
     setMadhabState(storage.get<'shafi' | 'hanafi'>('madhab', 'shafi'));
     setAdjustments(storage.get<Adjustments>('adjustments', ZERO_ADJUSTMENTS));
-    setAdhanIdState(storage.get<string>('adhan', 'adhan-aqib'));
+    // Through resolveAdhanId, so a phone still holding a retired track's id
+    // lands back on the default rather than on no sound at all.
+    const storedAdhan = resolveAdhanId(storage.get<string>('adhan', defaultAdhanId));
+    setAdhanIdState(storedAdhan);
+    storage.set('adhan', storedAdhan);
     setNotifEnabled(storage.get<boolean>('notifEnabled', false));
     void checkNotifPermission().then(setNotifPerm).catch(() => setNotifPerm('default'));
     setReady(true);

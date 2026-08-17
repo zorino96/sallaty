@@ -75,7 +75,7 @@ CONTENT SOURCES
 Prayer times: amozhgary.tv
 Kurdish translation: Tafsiri Asan — Burhan Muhammad-Amin
 Uthmani script: Tanzil.net
-Adhan recordings: Aaqib Azeez (CC BY-SA 4.0), Sabah Fakhri (Creative Commons), Fouad Adan (Public Domain)
+Adhan recordings: Aaqib Azeez (CC BY-SA 4.0), Fouad Adan (Public Domain)
 ```
 
 **What's New in This Version**

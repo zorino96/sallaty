@@ -122,8 +122,7 @@ information from them.
 - Kurdish translation: *Tafsiri Asan* — Burhan Muhammad-Amin
 - Uthmani Qur'an text: **Tanzil.net**
 - Adhan recordings: *The Adhan* — Aaqib Azeez (CC BY-SA 4.0, Wikimedia Commons);
-  *Call to prayer* — Sabah Fakhri (Creative Commons, Wikimedia Commons);
-  *Adhan al-Fajr* — Fouad Adan (Public Domain, archive.org)
+  *Adhan al-Fajr* — Fouad Adan (Public Domain Mark 1.0, archive.org)
 
 ## 9. Changes
 

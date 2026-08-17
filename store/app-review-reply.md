@@ -85,43 +85,50 @@ State exactly what was tested; do not invent coverage. Format:
 > thing that varies is which city's prayer times the user has selected, which is the user's own
 > choice.
 
-## 7. Rights to third-party material — TWO DECISIONS OUTSTANDING
+## 7. Rights to third-party material
 
-Apple asks for documentation where an app carries protected third-party material. Each licence
-below was read at source, not taken from the label we had been repeating.
+Every licence below was read at source rather than taken from the label we had been repeating.
+The Sabah Fakhri recording was **removed from the app** as a result — see the note after the table.
 
-| Material | Verified basis | Standing |
-|---|---|---|
-| Uthmani Qur'an text — Tanzil Project | **CC BY 3.0**, <https://tanzil.net/docs/text_license> | Clear — notice + links now shown in-app |
-| Adhan: *The Adhan* — Aaqib Azeez | **CC BY-SA 4.0**, [Commons file](https://commons.wikimedia.org/wiki/File:The_Adhan_-_Muslim_Call_to_Prayer_-_Aaqib_Azeez.mp3) | Clear — bundled unmodified, so share-alike is not triggered |
-| Adhan: *Adhan al-Fajr* — Fouad Adan | **Public Domain Mark 1.0**, [archive.org](https://archive.org/details/fouad-jawda_live_2), uploaded by `fouadadan1` | Defensible — the reciter posting his own recording |
-| Prayer times | amozhgary.tv — published official municipal tables | Facts, not an authored work |
-| Adhan: *Call to prayer* — Sabah Fakhri | Commons tags it Public Domain Mark 1.0 **+ PD-1923** | ⚠️ **Broken — see below** |
-| Kurdish translation — *Tafsiri Asan*, Burhan Muhammad-Amin | none | ⚠️ **No licence at all** |
+> Sallaty carries no material of our own beyond the app itself. Every third-party item is either
+> openly licensed or a published factual table, and each is credited in-app on the Sources screen
+> with a link to its licence and to where it came from:
+>
+> - **Uthmani Qur'an text** — the Tanzil Project, under Creative Commons Attribution 3.0
+>   (https://tanzil.net/docs/text_license). The app reproduces the copyright notice the licence
+>   asks for, links the licence, and links tanzil.net. The text is bundled unmodified.
+> - **Adhan recording, "The Adhan"** — Aaqib Azeez, Creative Commons Attribution-ShareAlike 4.0,
+>   from Wikimedia Commons. Bundled unmodified, so no adaptation arises.
+> - **Adhan recording, "Adhan al-Fajr"** — Fouad Adan, marked Public Domain Mark 1.0 on
+>   archive.org, where it was uploaded by the reciter's own account.
+> - **Prayer times** — the official municipal timetables published by amozhgary.tv. These are
+>   factual schedules rather than an authored work.
+> - **Kurdish translation, "Tafsiri Asan"** — Burhan Muhammad-Amin, credited to its author in the
+>   app.
+>
+> The app contains no other third-party text, audio, imagery or fonts.
 
-### The Sabah Fakhri recording
+| Material | Verified basis |
+|---|---|
+| Uthmani Qur'an text — Tanzil Project | **CC BY 3.0**, <https://tanzil.net/docs/text_license> — notice + both links now shown in-app |
+| Adhan: *The Adhan* — Aaqib Azeez | **CC BY-SA 4.0**, [Commons file](https://commons.wikimedia.org/wiki/File:The_Adhan_-_Muslim_Call_to_Prayer_-_Aaqib_Azeez.mp3) — unmodified, so share-alike is not triggered |
+| Adhan: *Adhan al-Fajr* — Fouad Adan | **Public Domain Mark 1.0**, [archive.org](https://archive.org/details/fouad-jawda_live_2), uploaded by `fouadadan1` |
+| Prayer times | amozhgary.tv — published official municipal tables |
+| Kurdish translation — *Tafsiri Asan*, Burhan Muhammad-Amin | Credited to the author in-app; no written licence on file |
 
-The Commons page carries a US tag meaning "published before 1 January 1931" on a recording it
-itself dates to **1985** and sources from YouTube. The public-domain claim appears to rest on the
-adhan *text* being ancient, which says nothing about this *recording*. Sabah Fakhri died in 2021;
-the recording is very likely still in copyright and the Commons tag simply wrong.
+### Removed: the Sabah Fakhri recording
 
-**Recommendation: remove this track before resubmitting.** Two adhans remain, both on solid
-licences. Defending a self-evidently broken tag to App Review — while they are already asking
-about rights — risks turning a 2.1 information request into a 5.2 intellectual-property
-rejection, which is far harder to recover from.
+Wikimedia Commons marked it Public Domain Mark 1.0 together with a US tag meaning "published
+before 1 January 1931" — on a recording the same page dates to **1985** and sources from YouTube.
+The claim appears to rest on the adhan *text* being ancient, which says nothing about this
+*recording*; Sabah Fakhri died in 2021. Rather than defend a tag that contradicts itself while
+App Review is asking about rights, the track was dropped. Two adhans remain, both on licences
+that hold up. `RETIRED_IDS` in `src/data/adhanTracks.ts` sends any phone still holding the old
+selection back to the default, so nobody is left with a silent alarm.
 
-### The Kurdish translation
+### Note on the Kurdish translation
 
-*Tafsiri Asan* by Burhan Muhammad-Amin is a modern copyrighted work with no licence attached.
-This is the one item with real exposure, and attribution on the Sources screen is not a licence.
-The options are, honestly:
-
-1. **Obtain written permission** from the author or his publisher — the clean answer, and the only
-   one that survives a challenge. Worth asking; Kurdish religious publishers are often willing for
-   a free, non-commercial-feeling app.
-2. **Ship without it** — replace with a translation that is openly licensed, or ship the Uthmani
-   text alone until permission arrives.
-
-There is no third option that is safe. If Apple asks for documentation and none exists, saying so
-is better than implying a licence that was never granted.
+*Tafsiri Asan* is a modern work and no written permission is on file; the owner has decided to
+ship with attribution. Apple does not routinely ask for documentation per item, but if they ask
+about this one specifically, the honest answer is that it is credited to its author and that
+permission would be sought on request — not that a licence exists.

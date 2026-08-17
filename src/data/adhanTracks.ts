@@ -33,25 +33,9 @@ export const adhanTracks: AdhanTrack[] = [
     licenseUrl: 'https://creativecommons.org/licenses/by-sa/4.0/',
     sourceUrl: 'https://commons.wikimedia.org/wiki/File:The_Adhan_-_Muslim_Call_to_Prayer_-_Aaqib_Azeez.mp3',
   },
-  // ⚠️ RIGHTS RISK — do not ship without deciding. Wikimedia Commons tags this
-  // file "Public Domain Mark 1.0" plus a US PD-1923 tag ("published before 1
-  // January 1931"), which cannot be true of a 1985 recording sourced from
-  // YouTube. The tag appears to rest on the adhan *text* being ancient, which
-  // says nothing about this *recording*. Sabah Fakhri died in 2021, so the
-  // recording is very likely still in copyright and the Commons tag is simply
-  // wrong. We keep the description honest about what Commons actually claims
-  // rather than repeating "Creative Commons", which it never said.
-  {
-    id: 'adhan-fakhry',
-    category: 'adhan',
-    ku: 'بانگی ئەزان · سەباح فەخری',
-    ar: 'الأذان · صباح فخري',
-    maqam: 'PD?',
-    file: '/audio/adhan-fakhry.mp3',
-    attribution: 'Call to prayer — Sabah Fakhri (1985) · marked Public Domain on Wikimedia Commons',
-    licenseUrl: 'https://creativecommons.org/publicdomain/mark/1.0/',
-    sourceUrl: 'https://commons.wikimedia.org/wiki/File:Call_to_prayer_by_Sabah_Fakhry.mp3',
-  },
+  // Removed: 'adhan-fakhry' (Sabah Fakhri, 1985). Wikimedia Commons marked it
+  // public domain on a tag meaning "published before 1 January 1931" — which
+  // cannot describe a 1985 recording taken from YouTube. See RETIRED_IDS below.
   {
     id: 'adhan-egypt',
     category: 'adhan',
@@ -75,8 +59,21 @@ export const adhanTracks: AdhanTrack[] = [
 
 export const defaultAdhanId = 'adhan-aqib';
 
+// Tracks that once shipped and no longer do. A phone that already stored one of
+// these would otherwise keep it forever: trackById returns undefined, soundBase
+// falls back to '', and the user gets the device's default alarm tone at prayer
+// time instead of a call to prayer — silently, with the setting still showing
+// their old choice. Anything unrecognised resolves back to the default.
+const RETIRED_IDS = ['adhan-fakhry'];
+
 export function trackById(id: string): AdhanTrack | undefined {
   return adhanTracks.find((t) => t.id === id);
+}
+
+/** The id to actually use, given whatever a device has stored. */
+export function resolveAdhanId(stored: string | undefined | null): string {
+  if (!stored || RETIRED_IDS.includes(stored) || !trackById(stored)) return defaultAdhanId;
+  return stored;
 }
 
 // Credit for every bundled track — rendered on the Control page. CC licences
