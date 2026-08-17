@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
-import { hideBanner, showBanner } from '@/lib/ads';
+import { hideBanner, onBannerVisibility, showBanner } from '@/lib/ads';
 import { nowPlaying, subscribePlayback } from '@/lib/adhanPlayer';
 
 /**
@@ -37,21 +37,16 @@ export default function AdGate() {
     return subscribePlayback((id) => setAdhanPlaying(id !== null));
   }, []);
 
+  // The layout reserves space for a banner that is really there, not for one we
+  // merely asked for — AdMob often has nothing to serve an unpublished app, and
+  // reserving for that would leave a blank strip along the bottom of the app.
+  useEffect(() => onBannerVisibility((visible) => {
+    document.body.classList.toggle('has-ad', visible);
+  }), []);
+
   useEffect(() => {
-    let cancelled = false;
     const blocked = isAdFree(pathname ?? '/') || adhanPlaying;
-
-    void (async () => {
-      if (blocked) {
-        await hideBanner();
-        if (!cancelled) document.body.classList.remove('has-ad');
-      } else {
-        await showBanner();
-        if (!cancelled) document.body.classList.add('has-ad');
-      }
-    })();
-
-    return () => { cancelled = true; };
+    void (blocked ? hideBanner() : showBanner());
   }, [pathname, adhanPlaying]);
 
   return null;

@@ -1,16 +1,19 @@
 // AdMob banner ads — deliberately narrow in scope.
 //
 // POLICY (ours, stricter than Google's):
-//   • Ads appear ONLY on ordinary pages (home, feature pages, settings).
-//   • NEVER on the Qur'an reader/search/bookmarks, NEVER on qibla, and NEVER
-//     while the adhan is sounding. Placing ads against scripture is both a
-//     policy risk and disrespectful.
+//   • One banner, pinned below the navigation bar, which is lifted clear of it
+//     so no tap ever lands on an advert by accident (see --ad-h in globals.css).
+//   • NEVER while the adhan is sounding, and never on the first-run flow.
 //   • Banner only — no interstitials, no rewarded, no app-open ads. A prayer
 //     app must never block the user from the times they came for.
 //
-// Until the real AdMob account exists, this uses Google's OFFICIAL TEST IDs, so
-// the build is safe to run (clicking real ads yourself = account ban). Swap the
-// two constants below for the real IDs, then flip USE_TEST_ADS to false.
+// ⚠️ USE_TEST_ADS serves Google's sample units, which render a bright "Test
+// mode / test ad" placeholder. That is right while developing and wrong in
+// anything you ship: reviewers read it as unfinished content, and the app earns
+// nothing. It must be false in any build that goes to a store.
+//
+// ⚠️ With it false the adverts are live. Never tap your own — self-clicks are
+// what get an AdMob account banned.
 
 import { Capacitor } from '@capacitor/core';
 
@@ -25,13 +28,32 @@ const TEST_BANNER_IOS = 'ca-app-pub-3940256099942544/2934735716';
 const REAL_BANNER_ANDROID = 'ca-app-pub-7966248989436758/4894133369';
 const REAL_BANNER_IOS = 'ca-app-pub-7966248989436758/6989727947';
 
-// Keep test ads ON until the app is on the Play Store and you're ready to earn.
-// ⚠️ Never click your own live ads — that gets the AdMob account banned.
-const USE_TEST_ADS = true;
+const USE_TEST_ADS = false;
 // ─────────────────────────────────────────────────────────────────────────────
 
 let initialised = false;
 let shown = false;
+
+// Whether a banner is actually on screen right now. Asking for one is not the
+// same as getting one: AdMob commonly has no inventory for an app that is not
+// yet published, and then `showBanner` resolves having drawn nothing. Reserving
+// space for that would leave a blank strip along the bottom of every screen, so
+// the layout follows this rather than the request.
+let bannerVisible = false;
+const visibilityListeners = new Set<(visible: boolean) => void>();
+
+function setBannerVisible(v: boolean): void {
+  if (bannerVisible === v) return;
+  bannerVisible = v;
+  for (const listener of visibilityListeners) listener(v);
+}
+
+/** Subscribe to whether a banner is really showing. Fires immediately. */
+export function onBannerVisibility(cb: (visible: boolean) => void): () => void {
+  visibilityListeners.add(cb);
+  cb(bannerVisible);
+  return () => { visibilityListeners.delete(cb); };
+}
 
 function bannerId(): string {
   const ios = Capacitor.getPlatform() === 'ios';
@@ -53,7 +75,10 @@ async function ensureInit(): Promise<boolean> {
   if (!enabled()) return false;
   if (initialised) return true;
   try {
-    const { AdMob, MaxAdContentRating } = await import('@capacitor-community/admob');
+    const { AdMob, MaxAdContentRating, BannerAdPluginEvents } = await import('@capacitor-community/admob');
+    // Attach before initialising, so the first banner's result is not missed.
+    await AdMob.addListener(BannerAdPluginEvents.Loaded, () => setBannerVisible(true));
+    await AdMob.addListener(BannerAdPluginEvents.FailedToLoad, () => setBannerVisible(false));
     await AdMob.initialize({
       // Only "General audiences" creatives — this is the SDK-level filter that
       // keeps dating/alcohol/gambling/suggestive ads out of an Islamic app.
@@ -93,8 +118,9 @@ export async function showBanner(): Promise<void> {
   } catch { /* never let an ad failure break the app */ }
 }
 
-/** Remove the banner — call on Qur'an / qibla / adhan screens. */
+/** Remove the banner — call while the adhan sounds, and on the first-run flow. */
 export async function hideBanner(): Promise<void> {
+  setBannerVisible(false);
   if (!shown) return;
   try {
     const { AdMob } = await import('@capacitor-community/admob');
