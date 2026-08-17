@@ -238,9 +238,27 @@ export default function ControlPage() {
             })}
           </div>
           {audioAttributions.length > 0 && (
-            <div className="mt-2 space-y-0.5 px-1 text-[9.5px] leading-4 text-ink-800/45 dark:text-cream-100/40" dir="ltr">
+            <div className="mt-2 space-y-1 px-1 text-[9.5px] leading-4 text-ink-800/45 dark:text-cream-100/40" dir="ltr">
               {audioAttributions.map((a, i) => (
-                <div key={i}>{a}</div>
+                <div key={i}>
+                  {a.text}
+                  {(a.licenseUrl || a.sourceUrl) && (
+                    <>
+                      {' · '}
+                      {a.licenseUrl && (
+                        <a href={a.licenseUrl} target="_blank" rel="noreferrer" className="underline">
+                          license
+                        </a>
+                      )}
+                      {a.licenseUrl && a.sourceUrl && ' · '}
+                      {a.sourceUrl && (
+                        <a href={a.sourceUrl} target="_blank" rel="noreferrer" className="underline">
+                          source
+                        </a>
+                      )}
+                    </>
+                  )}
+                </div>
               ))}
             </div>
           )}
@@ -262,11 +280,32 @@ export default function ControlPage() {
               <div>تەفسیری ئاسان — بورهان محمد ئەمین</div>
               <div dir="ltr">Tafsiri Asan — Burhan Muhammad-Amin</div>
             </div>
+            {/* Tanzil's licence is CC BY 3.0, and it asks for three specific
+                things in return: the copyright notice reproduced, the source
+                named, and a link back so readers can follow corrections to the
+                text. Crediting "Tanzil.net" alone does not satisfy it. */}
             <div>
               <div className="font-semibold text-ink-800/80 dark:text-cream-100/75">
                 {lang === 'ar' ? 'النص القرآني' : 'دەقی قورئان'}
               </div>
-              <div dir="ltr">Uthmani script, Tanzil.net</div>
+              <div dir="ltr">Uthmani script — Tanzil Project</div>
+              <div dir="ltr" className="text-[10px] leading-4 opacity-75">
+                Tanzil Quran Text Copyright © 2007–2021 Tanzil Project
+                <br />
+                License: Creative Commons Attribution 3.0 —{' '}
+                <a
+                  href="https://creativecommons.org/licenses/by/3.0/"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="underline"
+                >
+                  creativecommons.org/licenses/by/3.0
+                </a>
+                <br />
+                <a href="https://tanzil.net" target="_blank" rel="noreferrer" className="underline">
+                  tanzil.net
+                </a>
+              </div>
             </div>
           </div>
         </Section>
