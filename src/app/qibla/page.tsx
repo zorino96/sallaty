@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { MapPin, Navigation2 } from 'lucide-react';
 import BottomNav from '@/components/BottomNav';
 import PageHeader from '@/components/PageHeader';
@@ -26,9 +26,6 @@ export default function QiblaPage() {
   const { t, coords } = useApp();
   const [heading, setHeading] = useState<number | null>(null);
   const [perm, setPerm] = useState<PermState>('granted');
-  // Mirrors `heading` for the mount effect, which must read it without
-  // re-running and re-attaching everything on each compass tick.
-  const headingRef = useRef<number | null>(null);
 
   const onOrientation = useCallback((event: Event): void => {
     const e = event as OrientationEventLike;
@@ -37,13 +34,7 @@ export default function QiblaPage() {
       : e.alpha != null
         ? 360 - e.alpha
         : null;
-    if (h != null) {
-      headingRef.current = h;
-      setHeading(h);
-      // A reading arriving is the only reliable proof the compass is allowed;
-      // there is no API to query the current permission state.
-      setPerm('granted');
-    }
+    if (h != null) setHeading(h);
   }, []);
 
   const attach = useCallback((): void => {
@@ -63,41 +54,12 @@ export default function QiblaPage() {
       setPerm('unsupported');
       return;
     }
-
-    // Always listen first. iOS remembers a granted compass permission for the
-    // origin, so on every visit after the first the readings simply arrive and
-    // the compass is live with nothing to tap. Assuming a prompt is needed just
-    // because `requestPermission` exists is what put a button in front of the
-    // compass on every single visit.
+    if (typeof E.requestPermission === 'function') {
+      setPerm('needed');
+      return;
+    }
     attach();
-
-    if (typeof E.requestPermission !== 'function') return detach;
-
-    // iOS 13+ only grants the permission from inside a user gesture, so it
-    // cannot be asked for on mount. Instead, arm the *next* tap anywhere on the
-    // page — the user reaches for the compass anyway, and that touch is a valid
-    // gesture. No dedicated button, no extra step.
-    let settled = false;
-    const ask = (): void => {
-      if (settled) return;
-      settled = true;
-      void requestPermission();
-    };
-    // Only bother if nothing is arriving; a live compass needs no permission.
-    const timer = window.setTimeout(() => {
-      if (headingRef.current == null) {
-        setPerm('needed');
-        window.addEventListener('pointerdown', ask, { once: true, capture: true });
-      }
-    }, 800);
-
-    return () => {
-      window.clearTimeout(timer);
-      window.removeEventListener('pointerdown', ask, true);
-      detach();
-    };
-    // requestPermission is stable for the life of the page.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    return detach;
   }, [attach, detach]);
 
   const requestPermission = useCallback(async () => {
@@ -225,11 +187,12 @@ export default function QiblaPage() {
           <div className="mt-3 flex items-center justify-center gap-2 text-[12px] text-ink-800/60 dark:text-cream-100/60">
             <MapPin size={12} />
             {perm === 'needed' ? (
-              // Not a button any more: the next tap anywhere grants the compass
-              // permission, so say that. "Rotate the device to calibrate" is
-              // advice for a compass that is already running, and following it
-              // here gets the user nowhere.
-              <span>{t('tapForCompass')}</span>
+              <button
+                onClick={requestPermission}
+                className="rounded-full bg-gold-500 px-3 py-1 text-[11px] font-semibold text-white shadow-gold transition active:scale-95"
+              >
+                {t('calibrate')}
+              </button>
             ) : perm === 'denied' ? (
               <span className="opacity-70">{t('locationDenied')}</span>
             ) : heading == null ? (
