@@ -85,22 +85,43 @@ State exactly what was tested; do not invent coverage. Format:
 > thing that varies is which city's prayer times the user has selected, which is the user's own
 > choice.
 
-## 7. Rights to third-party material — NEEDS A DECISION
+## 7. Rights to third-party material — TWO DECISIONS OUTSTANDING
 
-Apple asks for documentation where an app carries protected third-party material. Sallaty contains
-four such items. Reply with whatever evidence exists for each; where the licence is public, say so
-and link it.
+Apple asks for documentation where an app carries protected third-party material. Each licence
+below was read at source, not taken from the label we had been repeating.
 
-| Material | Basis |
-|---|---|
-| Uthmani Qur'an text | Tanzil.net — state the licence terms relied on |
-| Kurdish translation — *Tafsiri Asan*, Burhan Muhammad-Amin | **Permission or licence needed** |
-| Adhan: *The Adhan* — Aaqib Azeez | CC BY-SA 4.0, Wikimedia Commons |
-| Adhan: *Call to prayer* — Sabah Fakhri | Creative Commons, Wikimedia Commons |
-| Adhan: *Adhan al-Fajr* — Fouad Adan | Public Domain, archive.org |
-| Prayer times | amozhgary.tv — published official tables |
+| Material | Verified basis | Standing |
+|---|---|---|
+| Uthmani Qur'an text — Tanzil Project | **CC BY 3.0**, <https://tanzil.net/docs/text_license> | Clear — notice + links now shown in-app |
+| Adhan: *The Adhan* — Aaqib Azeez | **CC BY-SA 4.0**, [Commons file](https://commons.wikimedia.org/wiki/File:The_Adhan_-_Muslim_Call_to_Prayer_-_Aaqib_Azeez.mp3) | Clear — bundled unmodified, so share-alike is not triggered |
+| Adhan: *Adhan al-Fajr* — Fouad Adan | **Public Domain Mark 1.0**, [archive.org](https://archive.org/details/fouad-jawda_live_2), uploaded by `fouadadan1` | Defensible — the reciter posting his own recording |
+| Prayer times | amozhgary.tv — published official municipal tables | Facts, not an authored work |
+| Adhan: *Call to prayer* — Sabah Fakhri | Commons tags it Public Domain Mark 1.0 **+ PD-1923** | ⚠️ **Broken — see below** |
+| Kurdish translation — *Tafsiri Asan*, Burhan Muhammad-Amin | none | ⚠️ **No licence at all** |
 
-The Kurdish translation is the one with real exposure: the other four are covered by public
-licences that can simply be cited. If there is no written permission for the translation, decide
-before replying whether to obtain one or to ship without it — the app already credits every source
-on its Sources screen, but attribution is not the same as a licence.
+### The Sabah Fakhri recording
+
+The Commons page carries a US tag meaning "published before 1 January 1931" on a recording it
+itself dates to **1985** and sources from YouTube. The public-domain claim appears to rest on the
+adhan *text* being ancient, which says nothing about this *recording*. Sabah Fakhri died in 2021;
+the recording is very likely still in copyright and the Commons tag simply wrong.
+
+**Recommendation: remove this track before resubmitting.** Two adhans remain, both on solid
+licences. Defending a self-evidently broken tag to App Review — while they are already asking
+about rights — risks turning a 2.1 information request into a 5.2 intellectual-property
+rejection, which is far harder to recover from.
+
+### The Kurdish translation
+
+*Tafsiri Asan* by Burhan Muhammad-Amin is a modern copyrighted work with no licence attached.
+This is the one item with real exposure, and attribution on the Sources screen is not a licence.
+The options are, honestly:
+
+1. **Obtain written permission** from the author or his publisher — the clean answer, and the only
+   one that survives a challenge. Worth asking; Kurdish religious publishers are often willing for
+   a free, non-commercial-feeling app.
+2. **Ship without it** — replace with a translation that is openly licensed, or ship the Uthmani
+   text alone until permission arrives.
+
+There is no third option that is safe. If Apple asks for documentation and none exists, saying so
+is better than implying a licence that was never granted.
