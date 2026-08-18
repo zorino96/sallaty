@@ -11,34 +11,38 @@ uploaded and its link pasted in.
 
 ## 1. Screen recording — RECORDED, NEEDS UPLOADING
 
-`sallaty-demo-for-apple.mp4`, 4 min 51 s, recorded on a physical iPhone from a cold launch on the
+`sallaty-demo-for-apple.mp4`, 5 min 04 s, recorded on a physical iPhone from a cold launch on the
 springboard. It covers: onboarding and language choice, the home screen with today's five prayer
 times, choosing a city by hand, the Qur'an with the Kurdish translation, ayah search, the qibla
 compass tracking, adhkar, the dhikr counter, nearby mosques with a handoff to Maps, and the adhan
-picker. The **notification permission prompt** appears at 0:29.
+picker, and it closes on the GPS location feature being exercised. The **notification permission
+prompt** appears at 0:29.
 
 Upload it as an unlisted YouTube video and put the URL in the reply.
 
-### On the location prompt
+### On location
 
-Apple asks that prompts for sensitive data appear in the recording. The one that appears is the
-notification prompt; the location prompt does not, and it is worth being straight about why rather
-than filming it a fourth time.
+The recording ends on a deliberate demonstration of it, at **4:52–5:04**: the city is overridden
+by hand to Fallujah, then "Automatic (GPS)" is tapped, and the app takes a real Core Location fix
+and resolves back to Sulaymaniyah — coordinates and the GPS badge both visible. That is the
+feature working, not merely permitted.
 
-The app asks for location during onboarding — visible at 0:05 of the raw clip, where the screen
-dims behind a system alert that iOS then dismisses without drawing, because that device had
-already settled the permission. Short of `Reset Location & Privacy`, which clears every app's
-prompts on the phone, it cannot be made to ask again there.
+The permission *dialog* itself does not appear, and the reason is visible in the footage rather
+than worth a fourth take: the app asks during onboarding, the screen dims behind a system alert,
+and iOS dismisses it without drawing, because that device had already settled the permission.
+Nothing short of Reset Location & Privacy — which clears every app's prompts on the phone — makes
+it ask again there. The prompt the recording does contain is the **notification** permission, at
+0:29.
 
-It is also not the crux of the app. Location is **optional**: refuse it, or never grant it, and
-Sallaty works in full — you pick a city from the list, which is exactly what the recording shows,
-and every prayer time, the qibla bearing and the mosque list follow from that choice. Say so
-plainly in the reply:
+Location is in any case **optional**. Refuse it and Sallaty works in full: you pick a city from
+the list, which is what most of the recording shows, and the prayer times, the qibla bearing and
+the mosque list all follow from that choice. Say so plainly:
 
-> Location is optional. The recording shows the app being used with a manually chosen city, which
-> is the complete experience — nothing is gated behind the location permission. The prompt shown
-> in the recording is the notification permission at 0:29. The location prompt appears on first
-> use of the "Automatic (GPS)" option in the city picker.
+> Location is optional — nothing in the app is gated behind it. The recording shows the app used
+> with a manually chosen city, which is the complete experience, and at 4:52 it shows the GPS
+> option being used: the city is set to Fallujah by hand, then "Automatic (GPS)" resolves back to
+> the device's real location. The system prompt visible in the recording is the notification
+> permission at 0:29.
 
 ## 2. Devices and OS tested — NEEDS THE DEVELOPER
 
