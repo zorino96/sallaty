@@ -1,0 +1,32 @@
+No sign-in is required - the app has no accounts and no backend. Everything works offline.
+
+1. DEMO VIDEO: https://youtu.be/AmnSTwqxDfE (unlisted, 5 min)
+Recorded on a physical iPhone from a cold launch, covering every feature listed below. The notification permission prompt appears at 0:29.
+
+Location is optional - nothing is gated behind it. Most of the recording shows the app with a manually chosen city, the complete experience. At 4:52 GPS is exercised: the city is set to Fallujah by hand, then "Automatic (GPS)" takes a real fix and resolves back to Sulaymaniyah, coordinates visible.
+
+2. DEVICES TESTED: iPhone 13 Pro, iOS 26.3, via TestFlight build 13 (version 1.0).
+
+3. WHAT THE APP IS
+A prayer-times, Qur'an and adhkar app for Kurdish- and Arabic-speaking Muslims, mainly in the Kurdistan Region of Iraq and its diaspora. Prayer times there are published as official municipal tables per city and differ from a generic calculation, so Sallaty ships those tables for 50+ cities and the times match what local mosques follow. It also provides the Qur'an with a Kurdish translation, a qibla compass and the daily adhkar. It works offline, with no account and no server of ours.
+
+4. REACHING THE FEATURES
+On first launch, allow or skip the location permission. If skipped, tap the location bar at the top of the home screen and choose a city, e.g. Sulaymaniyah. The home screen then shows today's five prayer times and a countdown. To hear the adhan without waiting, open Settings and use the adhan test button. Qur'an, qibla, adhkar and dhikr are on the bottom tab bar. Kurdish (Sorani) and Arabic switch in Settings.
+
+5. EXTERNAL SERVICES
+The app runs offline; the Qur'an text, translations, prayer-time tables and adhan audio are bundled in the binary.
+- Google AdMob: one small banner pinned to the bottom, the navigation bar lifted clear above it so no tap can land on an advert by accident. Always a banner, never full-screen or interstitial, never covering content, and never shown while the adhan is sounding. The app does not request App Tracking Transparency, so adverts are non-personalised.
+- amozhgary.tv: source of the official prayer-time tables. Bundled; the app may optionally refresh times for a new year. No personal data is sent.
+- Apple Maps / Google Maps: only if the user taps "nearby mosques", which hands off to the maps app.
+There is no authentication service, payment processor, analytics SDK or AI service.
+
+6. REGIONAL DIFFERENCES: none. The same city list, Qur'an text, translation and adhkar ship everywhere; nothing is gated by territory. The only variable is the city the user selects.
+
+7. THIRD-PARTY MATERIAL
+Each item is openly licensed or a published factual table, and each is credited in-app on the Sources screen with links to its licence and origin:
+- Uthmani Qur'an text: Tanzil Project, CC BY 3.0 (https://tanzil.net/docs/text_license). The app reproduces the copyright notice the licence requires and links it and tanzil.net. Bundled unmodified.
+- Adhan "The Adhan": Aaqib Azeez, CC BY-SA 4.0, Wikimedia Commons. Bundled unmodified, so no adaptation arises.
+- Adhan "Adhan al-Fajr": Fouad Adan, Public Domain Mark 1.0 on archive.org, uploaded by the reciter himself.
+- Prayer times: official municipal timetables from amozhgary.tv; factual schedules, not an authored work.
+- Kurdish translation "Tafsiri Asan": Burhan Muhammad-Amin. A devotional work prepared for religious benefit rather than commercial gain, and it circulates that way: carried without charge by Kurdish Qur'an apps, public Qur'an corpora and the Internet Archive, with no fee levied by any party. We are aware of no licensing mechanism for such translations in the Kurdistan Region, and no rights-holder claim has been asserted. The app credits the translator and earns no revenue from the text. Should the author or his publisher wish otherwise, we will obtain written permission or remove it on request.
+The app contains no other third-party text, audio, imagery or fonts.

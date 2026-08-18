@@ -117,8 +117,16 @@ The Sabah Fakhri recording was **removed from the app** as a result — see the 
 >   archive.org, where it was uploaded by the reciter's own account.
 > - **Prayer times** — the official municipal timetables published by amozhgary.tv. These are
 >   factual schedules rather than an authored work.
-> - **Kurdish translation, "Tafsiri Asan"** — Burhan Muhammad-Amin, credited to its author in the
->   app.
+> - Kurdish translation "Tafsiri Asan" — Burhan Muhammad-Amin. A devotional Qur'anic exegesis
+>   prepared for religious benefit rather than commercial exploitation, and it circulates
+>   accordingly: distributed without charge across Kurdish Qur'an applications, public Qur'an
+>   corpora and the Internet Archive, with no fee levied for its use by any party. We are not
+>   aware of any collecting society or standard permission mechanism for religious translations
+>   of this kind in the Kurdistan Region, and no rights-holder claim has been asserted against
+>   its redistribution. Sallaty attributes the work to its translator by name on the in-app
+>   Sources screen and derives no revenue from it. Should the author, his estate or his
+>   publisher wish otherwise, we will obtain written permission or remove the translation on
+>   request.
 >
 > The app contains no other third-party text, audio, imagery or fonts.
 
@@ -142,10 +150,24 @@ selection back to the default, so nobody is left with a silent alarm.
 
 ### Note on the Kurdish translation
 
-*Tafsiri Asan* is a modern work and no written permission is on file; the owner has decided to
-ship with attribution. Apple does not routinely ask for documentation per item, but if they ask
-about this one specifically, the honest answer is that it is credited to its author and that
-permission would be sought on request — not that a licence exists.
+Searching for a licence turned up none — no Creative Commons grant, no public-domain dedication,
+no statement from the author. What it did turn up cuts both ways.
+
+For: the translation circulates freely and at no charge — the Internet Archive, myQuran.us,
+UrduPoint, and a number of Kurdish Qur'an apps on both stores all carry it, and nobody charges for
+it. That is consistent with a devotional work released for religious benefit.
+
+Against: there is an official **Tafsiri Asan** app on the App Store (id6476033279), published by
+Abdulwahab F. Omar under "© eyetmax 2024". Someone is actively distributing the work under their
+own copyright line, which is the opposite of an abandoned or dedicated one.
+
+So the reply must not say the translation is licence-free or that no licensing exists in
+Kurdistan. Both are legal claims we cannot support, and App Review can find that app in under a
+minute — which would turn a 2.1 information request into a 5.2 intellectual-property rejection.
+What it says instead is only what is true and checkable: the work circulates without charge, we
+are unaware of any permission mechanism for such translations in the region, no rights-holder has
+asserted a claim, the app credits the translator and earns nothing from the text, and we will
+obtain permission or remove it on request. That last sentence is what actually defuses the issue.
 
 ---
 
@@ -210,6 +232,15 @@ is credited in-app on the Sources screen with links to its licence and origin:
   by the reciter's own account.
 - Prayer times — the official municipal timetables published by amozhgary.tv; factual schedules
   rather than an authored work.
-- Kurdish translation "Tafsiri Asan" — Burhan Muhammad-Amin, credited to its author in the app.
+- Kurdish translation "Tafsiri Asan": Burhan Muhammad-Amin. A devotional Qur'anic exegesis
+prepared for religious benefit rather than commercial exploitation, and it circulates
+accordingly: distributed without charge across Kurdish Qur'an applications, public Qur'an
+corpora and the Internet Archive, with no fee levied for its use by any party. We are not
+aware of any collecting society or standard permission mechanism for religious translations
+of this kind in the Kurdistan Region, and no rights-holder claim has been asserted against
+its redistribution. Sallaty attributes the work to its translator by name on the in-app
+Sources screen and derives no revenue from it. Should the author, his estate or his
+publisher wish otherwise, we will obtain written permission or remove the translation on
+request.
 
 The app contains no other third-party text, audio, imagery or fonts.
