@@ -4,12 +4,13 @@ Apple's 2.1 "Information Needed" is the standard first-submission questionnaire,
 report. Answer all seven points in one reply and paste the same text into **App Review Information
 → Notes** so future versions are not asked again.
 
-Items 1 and 3–7 are settled. Item 2 needs the device details, and item 1 needs the recording
-uploaded and its link pasted in.
+All seven items are answered and ready to send.
 
 ---
 
-## 1. Screen recording — RECORDED, NEEDS UPLOADING
+## 1. Screen recording — READY
+
+**https://youtu.be/AmnSTwqxDfE** (unlisted, verified reachable)
 
 `sallaty-demo-for-apple.mp4`, 5 min 04 s, recorded on a physical iPhone from a cold launch on the
 springboard. It covers: onboarding and language choice, the home screen with today's five prayer
@@ -17,8 +18,6 @@ times, choosing a city by hand, the Qur'an with the Kurdish translation, ayah se
 compass tracking, adhkar, the dhikr counter, nearby mosques with a handoff to Maps, and the adhan
 picker, and it closes on the GPS location feature being exercised. The **notification permission
 prompt** appears at 0:29.
-
-Upload it as an unlisted YouTube video and put the URL in the reply.
 
 ### On location
 
@@ -44,11 +43,9 @@ the mosque list all follow from that choice. Say so plainly:
 > the device's real location. The system prompt visible in the recording is the notification
 > permission at 0:29.
 
-## 2. Devices and OS tested — NEEDS THE DEVELOPER
+## 2. Devices and OS tested — READY
 
-State exactly what was tested; do not invent coverage. Format:
-
-> Tested on iPhone <model>, iOS <version>, via TestFlight build 13 (1.0).
+> Tested on iPhone 13 Pro, iOS 26.3, via TestFlight build 13 (1.0).
 
 ## 3. What the app does and who it is for
 
@@ -149,3 +146,70 @@ selection back to the default, so nobody is left with a silent alarm.
 ship with attribution. Apple does not routinely ask for documentation per item, but if they ask
 about this one specifically, the honest answer is that it is credited to its author and that
 permission would be sought on request — not that a licence exists.
+
+---
+
+# THE MESSAGE TO SEND
+
+Paste this verbatim into the App Review reply, and the same text into **App Review Information →
+Notes** so a future version is not asked the same seven questions.
+
+---
+
+Thank you for the review. Answers to all seven points:
+
+**1. Demo video.** https://youtu.be/AmnSTwqxDfE (unlisted, 5 minutes). Recorded on a physical
+iPhone from a cold launch, covering onboarding, prayer times, the Qur'an with the Kurdish
+translation, verse search, the qibla compass, adhkar, the dhikr counter, nearby mosques, and the
+adhan settings. The notification permission prompt appears at 0:29.
+
+Location is optional — nothing in the app is gated behind it. Most of the recording shows the app
+used with a manually chosen city, which is the complete experience. At 4:52 the GPS feature is
+exercised: the city is set to Fallujah by hand, then "Automatic (GPS)" is tapped and the app takes
+a real location fix and resolves back to Sulaymaniyah, coordinates visible.
+
+**2. Devices tested.** iPhone 13 Pro, iOS 26.3, via TestFlight build 13 (version 1.0).
+
+**3. What the app is.** Sallaty is a prayer-times, Qur'an and adhkar app for Kurdish- and
+Arabic-speaking Muslims, primarily in the Kurdistan Region of Iraq and its diaspora. Prayer times
+there are published as official municipal tables per city and differ from what a generic
+calculation produces, so Sallaty ships those official tables for more than 50 cities and the times
+match what local mosques follow. Alongside that: the Qur'an with a Kurdish translation, a qibla
+compass, and the daily adhkar. The whole app works offline, has no account, and no server of ours.
+
+**4. Reaching the features.** No sign-in is required; the app has no accounts and no backend.
+On first launch, allow or skip the location permission — if skipped, tap the location bar at the
+top of the home screen and choose a city, e.g. Sulaymaniyah. The home screen then shows today's
+five prayer times and a countdown. To hear the adhan without waiting, open Settings and use the
+adhan test button. The Qur'an, qibla compass, adhkar and dhikr counter are on the bottom tab bar.
+The interface is Kurdish (Sorani) and Arabic, switchable in Settings.
+
+**5. External services.** The app runs offline; the Qur'an text, translations, prayer-time tables
+and adhan recordings are bundled in the binary.
+- Google AdMob — one small banner pinned to the bottom. The navigation bar sits above it, lifted
+  clear, so no tap can land on an advert by accident. Always a banner, never full-screen or
+  interstitial, never covering content, and never shown while the adhan is sounding. The app does
+  not request App Tracking Transparency, so adverts are non-personalised.
+- amozhgary.tv — the published source of the official prayer-time tables. Bundled; the app may
+  optionally refresh times for a new year. The request carries no personal data.
+- Apple Maps / Google Maps — only if the user taps "nearby mosques", which hands off to the maps
+  app.
+There is no authentication service, no payment processor, no analytics SDK and no AI service.
+
+**6. Regional differences.** None. The same city list, Qur'an text, translation and adhkar ship
+everywhere; nothing is gated by territory. The only variable is which city the user selects.
+
+**7. Third-party material.** Every item is openly licensed or a published factual table, and each
+is credited in-app on the Sources screen with links to its licence and origin:
+- Uthmani Qur'an text — the Tanzil Project, Creative Commons Attribution 3.0
+  (https://tanzil.net/docs/text_license). The app reproduces the copyright notice the licence
+  requires and links both the licence and tanzil.net. Bundled unmodified.
+- Adhan recording "The Adhan" — Aaqib Azeez, CC BY-SA 4.0, from Wikimedia Commons. Bundled
+  unmodified, so no adaptation arises.
+- Adhan recording "Adhan al-Fajr" — Fouad Adan, Public Domain Mark 1.0 on archive.org, uploaded
+  by the reciter's own account.
+- Prayer times — the official municipal timetables published by amozhgary.tv; factual schedules
+  rather than an authored work.
+- Kurdish translation "Tafsiri Asan" — Burhan Muhammad-Amin, credited to its author in the app.
+
+The app contains no other third-party text, audio, imagery or fonts.
