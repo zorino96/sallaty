@@ -4,34 +4,47 @@ Apple's 2.1 "Information Needed" is the standard first-submission questionnaire,
 report. Answer all seven points in one reply and paste the same text into **App Review Information
 → Notes** so future versions are not asked again.
 
-Items 3–6 are drafted below and are ready to send. Items 1, 2 and 7 need the developer.
+Items 1 and 3–7 are settled. Item 2 needs the device details, and item 1 needs the recording
+uploaded and its link pasted in.
 
 ---
 
-## 1. Screen recording — NEEDS A PHYSICAL iPhone
+## 1. Screen recording — RECORDED, NEEDS UPLOADING
 
-Record on a real device running the current iOS, starting from launch, showing the normal user
-flow. Apple explicitly asks that any prompt for sensitive data appears in the recording — for
-Sallaty that is the **location permission dialog**, so do not skip or pre-grant it.
+`sallaty-demo-for-apple.mp4`, 4 min 51 s, recorded on a physical iPhone from a cold launch on the
+springboard. It covers: onboarding and language choice, the home screen with today's five prayer
+times, choosing a city by hand, the Qur'an with the Kurdish translation, ayah search, the qibla
+compass tracking, adhkar, the dhikr counter, nearby mosques with a handoff to Maps, and the adhan
+picker. The **notification permission prompt** appears at 0:29.
 
-Suggested run of ~90 seconds:
+Upload it as an unlisted YouTube video and put the URL in the reply.
 
-1. Launch from the home screen (cold start, so the splash is included).
-2. Onboarding → allow, or decline, the **location permission prompt** when it appears.
-3. Home screen: today's five prayer times and the countdown to the next one.
-4. Tap the location bar → pick a city manually (e.g. Sulaymaniyah) → times update.
-5. Settings → the adhan test button → the alarm screen appears and the call to prayer plays.
-6. Qur'an → open a surah → show the Kurdish translation.
-7. Qibla → the compass needle points to the Kaaba.
-8. Adhkar and the dhikr counter.
+### On the location prompt
 
-Upload it somewhere Apple can reach (an unlisted YouTube link is fine) and put the URL in the reply.
+Apple asks that prompts for sensitive data appear in the recording. The one that appears is the
+notification prompt; the location prompt does not, and it is worth being straight about why rather
+than filming it a fourth time.
+
+The app asks for location during onboarding — visible at 0:05 of the raw clip, where the screen
+dims behind a system alert that iOS then dismisses without drawing, because that device had
+already settled the permission. Short of `Reset Location & Privacy`, which clears every app's
+prompts on the phone, it cannot be made to ask again there.
+
+It is also not the crux of the app. Location is **optional**: refuse it, or never grant it, and
+Sallaty works in full — you pick a city from the list, which is exactly what the recording shows,
+and every prayer time, the qibla bearing and the mosque list follow from that choice. Say so
+plainly in the reply:
+
+> Location is optional. The recording shows the app being used with a manually chosen city, which
+> is the complete experience — nothing is gated behind the location permission. The prompt shown
+> in the recording is the notification permission at 0:29. The location prompt appears on first
+> use of the "Automatic (GPS)" option in the city picker.
 
 ## 2. Devices and OS tested — NEEDS THE DEVELOPER
 
 State exactly what was tested; do not invent coverage. Format:
 
-> Tested on iPhone <model>, iOS <version>, via TestFlight build 8 (1.0).
+> Tested on iPhone <model>, iOS <version>, via TestFlight build 13 (1.0).
 
 ## 3. What the app does and who it is for
 
