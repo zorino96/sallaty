@@ -1,6 +1,7 @@
 // Overpass-API mosque finder. Mirrors the recovered logic from
 // `recovered/beautified/page-81b1301d577ed6ca.beautified.js`.
 
+import { Capacitor } from '@capacitor/core';
 import { haversineKm } from './geolocation';
 import { storage } from './storage';
 import type { Coords } from './types';
@@ -110,7 +111,31 @@ export async function findNearbyMosques(
   throw lastError ?? new Error('All Overpass endpoints failed');
 }
 
-export function mosqueMapsUrl(m: Mosque): string {
+// Which maps app a link should open.
+//
+// App Review rejected 1.0 under Guideline 4 for sending iPhone users to a
+// third-party maps app with no way to use the built-in one: "revise the app to
+// give users the option to launch the native Apple Maps app". So every map link
+// is now written for a provider, the default follows the platform, and the
+// mosques screen offers the other one alongside it.
+export type MapProvider = 'apple' | 'google';
+
+export function defaultMapProvider(): MapProvider {
+  return Capacitor.getPlatform() === 'ios' ? 'apple' : 'google';
+}
+
+/** The other provider — what the secondary link on the mosques screen offers. */
+export function otherMapProvider(p: MapProvider): MapProvider {
+  return p === 'apple' ? 'google' : 'apple';
+}
+
+/** A pin at one mosque. */
+export function mosqueMapsUrl(m: Mosque, provider: MapProvider = defaultMapProvider()): string {
+  const label = m.name || m.nameAr || 'Mosque';
+  if (provider === 'apple') {
+    // With `ll` present, `q` is read as the pin's label rather than a search.
+    return `https://maps.apple.com/?ll=${m.lat},${m.lng}&q=${encodeURIComponent(label)}`;
+  }
   // `query` must be the coordinates alone. The `lat,lng(Label)` form is a geo:
   // URI convention, not a Maps one — Maps takes the whole string as free text,
   // searches for a place literally named "35.56,45.42(مزگەوتی نالی)", and
@@ -118,8 +143,11 @@ export function mosqueMapsUrl(m: Mosque): string {
   return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${m.lat},${m.lng}`)}`;
 }
 
-// Open Google Maps centered on the user with live "mosque" search results.
-// This always works (no Overpass dependency) and deep-links to the Maps app on Android.
-export function nearbyMosquesMapsUrl(c: Coords): string {
+/** A live "mosque" search around the user. Needs no Overpass result to work. */
+export function nearbyMosquesMapsUrl(c: Coords, provider: MapProvider = defaultMapProvider()): string {
+  if (provider === 'apple') {
+    // `q` alongside `sll` searches near that point instead of labelling it.
+    return `https://maps.apple.com/?q=${encodeURIComponent('mosque')}&sll=${c.lat},${c.lng}`;
+  }
   return `https://www.google.com/maps/search/mosque/@${c.lat},${c.lng},15z`;
 }

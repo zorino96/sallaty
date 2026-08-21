@@ -5,7 +5,10 @@ import { ExternalLink, LoaderCircle, MapPin, MapPinned, Navigation, RefreshCw } 
 import BottomNav from '@/components/BottomNav';
 import PageHeader from '@/components/PageHeader';
 import { useApp } from '@/lib/AppProvider';
-import { findNearbyMosques, mosqueMapsUrl, nearbyMosquesMapsUrl, type Mosque } from '@/lib/mosques';
+import {
+  defaultMapProvider, findNearbyMosques, mosqueMapsUrl, nearbyMosquesMapsUrl,
+  otherMapProvider, type MapProvider, type Mosque,
+} from '@/lib/mosques';
 import { addCheckin } from '@/lib/habits';
 
 function vibrate(p: number | number[]): void {
@@ -24,6 +27,13 @@ export default function MosquesPage() {
   // wrong one, which is how a first visit ends up showing nothing while a
   // second visit reads it straight from the cache and looks fine.
   const currentRequest = useRef(0);
+  // Resolved after mount: Capacitor.getPlatform() is 'web' during the static
+  // export, so choosing at render time would bake the wrong maps app in.
+  const [mapProvider, setMapProvider] = useState<MapProvider>('google');
+  useEffect(() => { setMapProvider(defaultMapProvider()); }, []);
+  const altProvider = otherMapProvider(mapProvider);
+  const providerLabel = (p: MapProvider): string =>
+    p === 'apple' ? t('openInAppleMaps') : t('openInGoogleMaps');
 
   // Ask for a fresh fix on first open if we've never located the user.
   useEffect(() => {
@@ -96,9 +106,11 @@ export default function MosquesPage() {
           </button>
         </div>
 
-        {/* Primary action — open Google Maps with nearby mosques (always reliable) */}
+        {/* Primary action — a live mosque search in the platform's own maps app,
+            with the other one offered underneath. App Review rejected 1.0 under
+            Guideline 4 for offering only a third-party map on iPhone. */}
         <a
-          href={nearbyMosquesMapsUrl(coords)}
+          href={nearbyMosquesMapsUrl(coords, mapProvider)}
           target="_blank"
           rel="noopener noreferrer"
           onClick={() => vibrate(8)}
@@ -109,9 +121,20 @@ export default function MosquesPage() {
           </span>
           <span className="min-w-0 flex-1">
             <span className="block text-[15px] font-bold leading-tight">{t('findInMaps')}</span>
-            <span className="mt-0.5 block text-[11px] opacity-85">{t('openInMap')}</span>
+            <span className="mt-0.5 block text-[11px] opacity-85">{providerLabel(mapProvider)}</span>
           </span>
           <ExternalLink size={18} className="shrink-0 opacity-90" />
+        </a>
+
+        <a
+          href={nearbyMosquesMapsUrl(coords, altProvider)}
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={() => vibrate(6)}
+          className="surface flex items-center justify-center gap-2 rounded-2xl px-4 py-2.5 text-[12.5px] font-semibold text-ink-800/70 transition active:scale-[0.99] dark:text-cream-100/70"
+        >
+          <ExternalLink size={13} className="shrink-0 opacity-70" />
+          {providerLabel(altProvider)}
         </a>
 
         {!located && geoStatus !== 'locating' && (
@@ -168,7 +191,7 @@ export default function MosquesPage() {
                       </div>
                     </div>
                     <a
-                      href={mosqueMapsUrl(m)}
+                      href={mosqueMapsUrl(m, mapProvider)}
                       target="_blank"
                       rel="noopener noreferrer"
                       aria-label={t('openInMap')}
