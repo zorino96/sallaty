@@ -122,6 +122,73 @@ async function getHtml(url: string): Promise<string | null> {
   }
 }
 
+// Widest plausible window per prayer across Iraqi latitudes, minutes from
+// midnight. Loose on purpose: this rejects a broken scrape (a 12h/24h slip, a
+// shifted column, a page that stopped being a timetable), not a two-minute
+// disagreement. scripts/validate-bang-data.mjs applies the same rules to the
+// bundled files — keep the two in step.
+const PLAUSIBLE: ReadonlyArray<readonly [number, number]> = [
+  [2 * 60, 7 * 60],            // fajr
+  [4 * 60, 8 * 60 + 30],       // sunrise
+  [10 * 60 + 30, 14 * 60],     // dhuhr
+  [13 * 60, 18 * 60],          // asr
+  [15 * 60, 21 * 60],          // maghrib
+  [16 * 60 + 30, 23 * 60],     // isha
+];
+
+function toMinutes(hhmm: string): number | null {
+  const m = /^(\d{1,2}):(\d{2})$/.exec(hhmm);
+  if (!m) return null;
+  const h = Number(m[1]);
+  const mi = Number(m[2]);
+  if (h > 23 || mi > 59) return null;
+  return h * 60 + mi;
+}
+
+/**
+ * Whether six scraped times can be a real day. The times must each sit in
+ * their window and must run forward through the day — a swapped or duplicated
+ * column fails the ordering check even when every value looks fine alone.
+ *
+ * Anything this rejects is dropped rather than shown. Displaying a wrong
+ * prayer time with the authority of the official tables is worse than falling
+ * back to the calculation, which is at least honest about what it is.
+ */
+export function isPlausibleRow(row: readonly string[]): boolean {
+  if (row.length !== 6) return false;
+  let prev = -1;
+  for (let i = 0; i < 6; i++) {
+    const v = toMinutes(row[i]);
+    if (v === null) return false;
+    const [lo, hi] = PLAUSIBLE[i];
+    if (v < lo || v > hi) return false;
+    if (v <= prev) return false;
+    prev = v;
+  }
+  return true;
+}
+
+/** What the last live-refresh attempt did. Read by the /control screen. */
+export type BangFetchStatus = {
+  at: number;
+  outcome: 'ok' | 'unreachable' | 'unparsed' | 'implausible';
+  /** Days accepted, when the outcome is 'ok'. */
+  days?: number;
+  /** Days thrown out by isPlausibleRow, whatever the outcome. */
+  rejected?: number;
+};
+
+const FETCH_STATUS_KEY = 'bang.lastFetch';
+
+function recordFetch(status: BangFetchStatus): void {
+  storage.set(FETCH_STATUS_KEY, status);
+}
+
+/** The last live-refresh attempt, or null if one has never run. */
+export function lastBangFetch(): BangFetchStatus | null {
+  return storage.get<BangFetchStatus | null>(FETCH_STATUS_KEY, null);
+}
+
 // Fetch + parse one month for a city, returning {"M-D":[6×HH:MM 24h]} or null.
 export async function fetchBangMonthLive(
   citySlugOnSite: string,
@@ -129,7 +196,10 @@ export async function fetchBangMonthLive(
 ): Promise<Record<string, [string, string, string, string, string, string]> | null> {
   const url = `https://amozhgary.tv/bang/${encodeURIComponent(citySlugOnSite)}?month=${month}`;
   const html = await getHtml(url);
-  if (!html) return null;
+  if (!html) {
+    recordFetch({ at: Date.now(), outcome: 'unreachable' });
+    return null;
+  }
 
   // The month table renders each day as a row containing the 6 labelled times.
   // We scan for "<day> - <monthName> - <year>" anchors and the following 6 times.
@@ -140,13 +210,33 @@ export async function fetchBangMonthLive(
   // paired with a day number nearby. We capture day + the 6 times that follow.
   const dayRe = /(\d{1,2})\s*-\s*[^-]{2,15}-\s*20\d{2}[\s\S]{0,40}?بەیانی\s*:?\s*(\d{1,2}:\d{2})[\s\S]{0,30}?(\d{1,2}:\d{2})[\s\S]{0,30}?(\d{1,2}:\d{2})[\s\S]{0,30}?(\d{1,2}:\d{2})[\s\S]{0,30}?(\d{1,2}:\d{2})[\s\S]{0,30}?(\d{1,2}:\d{2})/g;
   let mt: RegExpExecArray | null;
+  let rejected = 0;
   while ((mt = dayRe.exec(text)) !== null) {
     const day = parseInt(mt[1], 10);
     const raw = [mt[2], mt[3], mt[4], mt[5], mt[6], mt[7]];
     const conv = raw.map((t, i) => to24(i, t)) as [string, string, string, string, string, string];
+    // A regex this shape can match six unrelated times on a page that is no
+    // longer a timetable. Only keep rows that could be a real day.
+    if (!isPlausibleRow(conv)) {
+      rejected++;
+      continue;
+    }
     out[`${month}-${day}`] = conv;
   }
-  return Object.keys(out).length ? out : null;
+
+  const days = Object.keys(out).length;
+  if (!days) {
+    // Nothing usable: either the page stopped matching, or everything it
+    // yielded was nonsense. Those are different problems, so say which.
+    recordFetch({
+      at: Date.now(),
+      outcome: rejected > 0 ? 'implausible' : 'unparsed',
+      rejected,
+    });
+    return null;
+  }
+  recordFetch({ at: Date.now(), outcome: 'ok', days, rejected });
+  return out;
 }
 
 // Try to get times for a date when the bundle doesn't cover it: pull the live

@@ -2,7 +2,7 @@
 
 Everything knowingly postponed, with why. If it is not here it does not exist.
 
-Last reviewed: 23 August 2026.
+Last reviewed: 23 August 2026 (CEO review, HOLD SCOPE).
 
 ---
 
@@ -77,6 +77,72 @@ account — would mean handling a private key.
 Ship **1.0.2 first** (same risk profile as what is already live, turns on revenue
 today), then **1.0.3** through internal testing. Do not conflate the two: they
 are different builds that happen to be one version apart.
+
+## Data
+
+### The bundled tables cover 2026 only
+51 cities × 365 days, `year: 2026`. `bangTimesFromData` gates on the year, so
+from 1 January 2027 every city falls through to the live amozhgary fetch — and
+an offline user falls through again, to the calculation. The renewal path was
+built for exactly this (see the header comment in `src/lib/bangTimes.ts`) and it
+works, but it is a scrape and it will be exercised in production for the first
+time on that date.
+
+`npm run validate:bang` now warns once the tables are within 150 days of
+expiring, and it runs as the first step of `npm run aab` and `npm run
+cap:sync:ios`, so no release build can be cut without seeing it.
+
+**Import the 2027 tables before January.** That removes the dependency
+entirely for another year.
+
+---
+
+## From the CEO review, 23 August 2026
+
+Mode: HOLD SCOPE. Two findings were acted on; the rest are recorded here and
+deliberately not acted on.
+
+### Done in this review
+- **`scripts/validate-bang-data.mjs`** — checks all 51 files: every day present,
+  six times each, each inside a plausible window, and ordered forward through
+  the day. 18,615 days pass. Wired into both release scripts.
+- **`isPlausibleRow()`** in `bangTimes.ts` — the same rules applied to the live
+  scrape, so a page that stopped being a timetable is rejected rather than
+  displayed with the authority of the official tables.
+- **Live-refresh status on `/control`** — what the last fetch did and when, so a
+  broken scrape is visible instead of silent.
+- **A real bug the instrumentation immediately caught:** `bangMeta` is set
+  before its bundle file is awaited, so the renewal effect read
+  `bangData === null` as "today isn't covered" and scraped amozhgary.tv on
+  every cold start of an app that is meant to work offline. Fixed with
+  `bangLoadedFor`; verified — the request no longer happens.
+- **`APP_VERSION`** was `'0.2.0'` on the diagnostics screen of a 1.0.3 app.
+
+### Considered and NOT acted on
+- **`armHeal` swallows every exception**, so the three-hourly self-heal could in
+  principle die permanently and silently. Not acted on: the adhan is confirmed
+  working, there is no field evidence of this ever happening, and the chain
+  already has four independent recovery paths (`setAlarmClock` with fallbacks,
+  the heal, `BootReceiver`, and a reschedule on every firing). Hardening against
+  an unobserved failure was judged speculation, not a defect.
+- **`/control` does not show the exact-alarm or battery-exemption state**, though
+  `AdhanAlarmPlugin` already exposes both. Would turn a support black hole into
+  self-diagnosis, and sends no data anywhere, so it does not touch the
+  "no analytics" statement given to App Review. Same reasoning as above — left
+  until there is a reason.
+- **Double adhan is possible in a sub-second window.** The dedup key is
+  `title + "@" + (millis / 60000)`, so a receiver firing at 04:59:59.9 and an
+  activity starting at 05:00:00.1 get different keys.
+- **No leap day.** Keys are `M-D` and the bundle holds 365 rows, so `2-29` is
+  absent. 2027 is not a leap year; 2028 is.
+- **A hydration error is logged on every page in dev**, including pages this
+  review did not touch — pre-existing, and the production export is a different
+  path. Worth a look one day, not now.
+- **Still no tests beyond the data validator**, and no CI other than Codemagic's
+  iOS build.
+- **Capacitor 8 has no rollback plan and no staged rollout.** minSdk 22 → 24 is
+  one-way for anyone who takes the update; Play offers a percentage rollout and
+  nothing currently uses it.
 
 ---
 

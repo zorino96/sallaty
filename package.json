@@ -11,9 +11,10 @@
     "cap:open": "npx cap open android",
     "android": "next build && npx cap sync android && npx cap run android",
     "apk": "node scripts/build-apk.mjs",
-    "aab": "next build && npx cap sync android && cd android && gradlew.bat bundleRelease",
-    "cap:sync:ios": "next build && npx cap sync ios",
-    "ios": "next build && npx cap sync ios && npx cap open ios"
+    "aab": "npm run validate:bang && next build && npx cap sync android && cd android && gradlew.bat bundleRelease",
+    "cap:sync:ios": "npm run validate:bang && next build && npx cap sync ios",
+    "ios": "next build && npx cap sync ios && npx cap open ios",
+    "validate:bang": "node scripts/validate-bang-data.mjs"
   },
   "dependencies": {
     "@capacitor-community/admob": "^8.1.0",

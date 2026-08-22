@@ -119,6 +119,11 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   // Official amozhgary.tv times for the nearest covered city (primary source).
   const [bangData, setBangData] = useState<BangCityData | null>(null);
   const [bangMeta, setBangMeta] = useState<BangCityMeta | null>(null);
+  // Which city `bangData` finished loading for. `bangData === null` is
+  // ambiguous on its own — it means both "still loading" and "this city has no
+  // bundled file" — and the yearly-renewal effect below has to tell those
+  // apart, or it fires a live scrape on every cold start.
+  const [bangLoadedFor, setBangLoadedFor] = useState<string | null>(null);
   // Live-fetched months merged in for dates the bundle doesn't cover (year rollover).
   const [liveOverlay, setLiveOverlay] = useState<Record<string, [string, string, string, string, string, string]>>({});
 
@@ -287,11 +292,15 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       if (!near) {
         setBangMeta(null);
         setBangData(null);
+        setBangLoadedFor(null);
         return;
       }
       setBangMeta(near.city);
+      setBangLoadedFor(null); // the file for this city has not arrived yet
       const data = await loadBangCity(near.city.slug);
-      if (alive) setBangData(data);
+      if (!alive) return;
+      setBangData(data);
+      setBangLoadedFor(near.city.slug);
     })();
     return () => {
       alive = false;
@@ -334,6 +343,11 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   // from amozhgary.tv and merge it in (cached). Falls back silently to calc.
   useEffect(() => {
     if (!ready || !bangMeta) return;
+    // Wait for this city's bundle to actually land. `bangMeta` is set before
+    // the file is awaited, so without this the effect sees bangData === null on
+    // the very first render, reads it as "today isn't covered", and scrapes
+    // amozhgary.tv on every cold start of an app that is meant to work offline.
+    if (bangLoadedFor !== bangMeta.slug) return;
     const today = new Date();
     const covered = bangData && bangTimesFromData(bangData, today);
     const key = `${today.getMonth() + 1}-${today.getDate()}`;
@@ -350,7 +364,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     return () => {
       alive = false;
     };
-  }, [ready, bangMeta, bangData, liveOverlay]);
+  }, [ready, bangMeta, bangData, bangLoadedFor, liveOverlay]);
 
   const getTimes = useCallback((date?: Date) => resolveTimes(date ?? new Date()).times, [resolveTimes]);
 

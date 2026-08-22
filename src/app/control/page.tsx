@@ -13,8 +13,12 @@ import { currentStreak, getCheckins, subscribeCheckins, trackedDays } from '@/li
 import { adhanTracks, audioAttributions } from '@/data/adhanTracks';
 import { playAdhan, stopAdhan } from '@/lib/adhanPlayer';
 import { fireTestNotification } from '@/lib/notifications';
+import { lastBangFetch } from '@/lib/bangTimes';
 
-const APP_VERSION = '0.2.0';
+// Keep in step with versionName in android/app/build.gradle and
+// MARKETING_VERSION in the Xcode project. A diagnostics screen that reports the
+// wrong version sends whoever is reading a bug report after the wrong build.
+const APP_VERSION = '1.0.3';
 
 export default function ControlPage() {
   const {
@@ -79,6 +83,24 @@ export default function ControlPage() {
     : geoStatus === 'locating'  ? t('locating')
     : t('permissionNotAsked');
 
+  // The bundled tables hold one year. Once they run out the app lives off a
+  // scrape of amozhgary.tv, which can stop matching without anything failing
+  // loudly. This is the row that says whether it is still working — read from
+  // storage on mount so it reflects whatever the last attempt actually did.
+  const [lastFetch, setLastFetch] = useState<ReturnType<typeof lastBangFetch>>(null);
+  useEffect(() => { setLastFetch(lastBangFetch()); }, []);
+
+  const liveRefreshLabel = useMemo(() => {
+    if (!lastFetch) return '—';
+    const when = new Date(lastFetch.at).toLocaleDateString();
+    const outcome =
+      lastFetch.outcome === 'ok'          ? `${t('liveRefreshOk')} · ${lastFetch.days} ${t('days')}`
+      : lastFetch.outcome === 'unreachable' ? t('liveRefreshUnreachable')
+      : lastFetch.outcome === 'unparsed'    ? t('liveRefreshUnparsed')
+      : t('liveRefreshImplausible');
+    return `${outcome} · ${when}`;
+  }, [lastFetch, t]);
+
   const testNotification = async (): Promise<void> => {
     if (typeof navigator !== 'undefined' && 'vibrate' in navigator) navigator.vibrate?.(8);
     if (notifPerm !== 'granted') await enableNotifications();
@@ -135,6 +157,12 @@ export default function ControlPage() {
               ? `${t('sourceBundled')}${bangCityName ? ` · ${bangCityName}` : ''}`
               : t('sourceCalculated')}
           />
+          {/* Only meaningful once the bundle has run out and the app is living
+              off the live amozhgary fetch. Until then there is nothing to say,
+              and an extra row would just be noise. */}
+          {lastFetch && (
+            <Row label={t('liveRefresh')} value={liveRefreshLabel} />
+          )}
           {(['fajr', 'sunrise', 'dhuhr', 'asr', 'maghrib', 'isha'] as const).map((p) => (
             <Row
               key={p}
