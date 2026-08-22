@@ -2,30 +2,37 @@
 
 Everything knowingly postponed, with why. If it is not here it does not exist.
 
-Last reviewed: 22 August 2026.
+Last reviewed: 22 August 2026 (CEO review).
 
 ---
 
 ## Deadline
 
-### targetSdk 36 — Play stops accepting updates after 31 August 2026
-`android/variables.gradle` targets 35. Play's console warns that this is now
-outside the accepted window; after 31 August no update can be uploaded at all,
-including one that fixes something urgent.
+### targetSdk 36 — extended to 1 November 2026
+Play requires API 36 for any update from what was 31 August. **An extension was
+requested and granted on 22 August: the date is now 1 November.** The console
+confirms "From Nov 1, 2026, if your target API level is not within 1 year of
+the latest Android release, you won't be able to update your app."
 
-Not bundled into 1.0.2 on purpose: API 36 enforces edge-to-edge, Play already
-raises three edge-to-edge warnings against the current build, and there is no
-Android device here to check the result on. Folding an untested layout change
-into the release that unblocks revenue trades a certain gain for an uncertain
-one.
+The extension was worth asking for because this is not the one-line change it
+looks like. `node_modules/@capacitor/android/capacitor/build.gradle` hardcodes
+AGP 8.2.1, which cannot compile against SDK 36 and cannot be edited — npm
+overwrites it. Reaching API 36 therefore means **upgrading Capacitor 6 to 7 or
+8**, across all eight `@capacitor/*` packages plus the community AdMob plugin,
+touching the adhan alarm code, the AdMob integration and the iOS project. That
+is not a change to rush into a nine-day window with an App Store submission
+open.
 
-Ship it as **1.0.3** through the **internal testing track** instead — Play's
+Attempted and reverted on 22 August (branch `try/api36`, deleted): bumping the
+root AGP to 8.9.1 and Gradle to 8.11.1 leaves Capacitor resolving 8.2.1 for its
+own module regardless.
+
+When doing it: ship through the **internal testing track** first. Play's
 pre-launch report runs the build on real hardware in Google's device farm and
-returns screenshots and crashes. That is the substitute for a device we do not
-have. Watch the bottom navigation and the advert banner: that pair is where
-edge-to-edge is most likely to break.
-
----
+returns screenshots and crashes — the substitute for an Android device we do
+not have. API 36 enforces edge-to-edge, and Play already raises three
+edge-to-edge warnings against the current build. Watch the bottom navigation
+and the advert banner: that pair is where it is most likely to break.
 
 ## Revenue
 
@@ -46,11 +53,14 @@ step).
 
 ## Store presence
 
-### Screenshots show the wrong theme
-All seven screenshots on both stores are dark-mode captures. The app now opens
-in **light** mode, so the shop window shows a product that does not match what
-a new user sees. Re-capture in light mode. On iOS this is also a soft
-Guideline 2.3.3 risk ("screenshots should show the app in use").
+### Screenshots re-shot in light mode — not yet uploaded
+All 21 store screenshots were dark-mode captures from 13 August; the default
+theme changed to light on the 18th and the listings kept showing a product that
+does not match what a new user installs. Re-captured on 22 August for all three
+sizes (`store/`, `store/ios/`, `store/ios-65/`) and the script no longer
+hardcodes the dark scheme. **They still have to be uploaded to both consoles.**
+On iOS this was also a soft Guideline 2.3.3 risk — screenshots are meant to
+show the app in use.
 
 ### Screenshots carry no captions
 Raw screens with no overlaid text. Every competitor annotates. Low effort,
@@ -117,6 +127,12 @@ a ContentProvider.
 "Edge-to-edge may not display for all users", "deprecated APIs or parameters
 for edge-to-edge", and an R8 optimisation suggestion. Address alongside the
 targetSdk 36 work — they are the same problem seen from two directions.
+
+### Nobody is looking for this app
+Zero installs against an incumbent with 500K. Everything so far has been about
+shipping; nothing has been about anyone finding it. No ASO beyond the default
+listing, no launch anywhere, no captions on the screenshots. Worth a plan of
+its own once the App Store submission clears.
 
 ---
 
