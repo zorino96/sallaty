@@ -37,6 +37,7 @@ ios/App/App/public/
 store/min/
 store/*.png
 store/ios/*.png
+store/ios-65/*.png
 
 # ── release signing: NEVER commit the key or its passwords ──
 *.jks
