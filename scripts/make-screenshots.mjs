@@ -80,7 +80,11 @@ const ctx = await browser.newContext({
   isMobile: true,
   hasTouch: true,
   locale: 'ckb-IQ',
-  colorScheme: 'dark',
+  // Light, because that is what the app opens in. The first set of store
+  // screenshots was shot while dark was still the default, and they stayed up
+  // after the default changed — so every listing showed a product that did not
+  // match the one a new user installs.
+  colorScheme: 'light',
 });
 // Show the app the way a properly set-up install looks (notifications allowed),
 // rather than a browser's default "denied" state.
@@ -91,6 +95,10 @@ const page = await ctx.newPage();
 await page.addInitScript(() => {
   localStorage.setItem('selati.onboarded', 'true');
   localStorage.setItem('selati.guideSeen', 'true');
+  // Seed the theme explicitly rather than leaning on prefers-color-scheme: the
+  // app reads its own stored value, so the context's colorScheme alone would
+  // not decide what the screenshot shows.
+  localStorage.setItem('selati.theme', JSON.stringify('light'));
   // Show the app as it looks once the user has allowed notifications — the
   // normal, set-up state — instead of a bare browser's "denied".
   localStorage.setItem('selati.notifEnabled', 'true');
