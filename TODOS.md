@@ -2,65 +2,111 @@
 
 Everything knowingly postponed, with why. If it is not here it does not exist.
 
-Last reviewed: 22 August 2026 (CEO review).
+Last reviewed: 23 August 2026.
 
 ---
 
 ## Deadline
 
-### targetSdk 36 — extended to 1 November 2026
-Play requires API 36 for any update from what was 31 August. **An extension was
-requested and granted on 22 August: the date is now 1 November.** The console
-confirms "From Nov 1, 2026, if your target API level is not within 1 year of
-the latest Android release, you won't be able to update your app."
+### targetSdk 36 — done on the branch, not yet shipped
+Play requires API 36 for any update from **1 November 2026** (extension granted
+22 August; the original date was 31 August).
 
-The extension was worth asking for because this is not the one-line change it
-looks like. `node_modules/@capacitor/android/capacitor/build.gradle` hardcodes
-AGP 8.2.1, which cannot compile against SDK 36 and cannot be edited — npm
-overwrites it. Reaching API 36 therefore means **upgrading Capacitor 6 to 7 or
-8**, across all eight `@capacitor/*` packages plus the community AdMob plugin,
-touching the adhan alarm code, the AdMob integration and the iOS project. That
-is not a change to rush into a nine-day window with an App Store submission
-open.
+**The upgrade is done and it builds.** Branch `chore/capacitor-8`, built
+23 August: Capacitor 6 → **8.5.0** across all eight `@capacitor/*` packages plus
+`@capacitor-community/admob` 8.1.0, AGP 8.2.1 → **8.13.0**, Gradle 8.2.1 →
+**8.13**, compileSdk/targetSdk 35 → **36**, minSdk 22 → **24**, Java 21.
+`BUILD SUCCESSFUL`, and `tsc --noEmit` passes untouched — the web layer needed
+no changes at all.
 
-Attempted and reverted on 22 August (branch `try/api36`, deleted): bumping the
-root AGP to 8.9.1 and Gradle to 8.11.1 leaves Capacitor resolving 8.2.1 for its
-own module regardless.
+What made it possible: Capacitor 8's `@capacitor/android` hardcodes AGP
+**8.13.0** and defaults compileSdk to 36, where Capacitor 6 hardcoded 8.2.1.
+That one line was the entire blocker described in the 22 August entry.
 
-When doing it: ship through the **internal testing track** first. Play's
-pre-launch report runs the build on real hardware in Google's device farm and
-returns screenshots and crashes — the substitute for an Android device we do
-not have. API 36 enforces edge-to-edge, and Play already raises three
-edge-to-edge warnings against the current build. Watch the bottom navigation
-and the advert banner: that pair is where it is most likely to break.
+Artefact: `~/Downloads/sallaty-1.0.3-versionCode4-targetSdk36.aab` (17 MB).
+
+**Verified:** targetSdk 36 and minSdk 24 in the packaged manifest; the permission
+set is identical to the approved 1.0.2; and there is still no
+`foregroundServiceType` anywhere — the alarm-clock pattern survives the upgrade,
+so Play will not ask for a demo video.
+
+**Not verified: that the app still runs.** A green build is not a working app.
+Ship it through the **internal testing track** so Play's pre-launch report
+exercises it on real hardware — that is the substitute for the Android device we
+do not have. API 36 enforces edge-to-edge with no opt-out. The web layer is
+already inset-aware (`viewportFit: 'cover'`, `env(safe-area-inset-top)` on every
+page, `safe-area-inset-bottom` on the nav), so the odds are good — but the bottom
+navigation and the advert banner are still the pair to watch.
+
+Side effects to accept: **minSdk 24 drops Android 5.x**, and iOS moves to a
+**15.0** deployment target (Capacitor 8's floor, up from 13.0).
+
+iOS changes on the same branch, unbuildable here (no Mac — Codemagic will tell):
+
+- `ios/App/App/DeviceMotionPermission.swift` **deleted.** Capacitor 8's own
+  `WebViewDelegationHandler` now implements
+  `requestDeviceOrientationAndMotionPermissionFor` and grants it. Keeping our
+  extension would put a duplicate `@objc` selector on the same class and would
+  not compile. The qibla compass now gets its permission from Capacitor itself.
+  `NSMotionUsageDescription` stays — CoreMotion still needs it.
+- Podfile: the `GoogleUserMessagingPlatform '< 3.0'` pin **removed.** AdMob 8.1.0
+  has moved to the UMP 3.x API (`ConsentStatus`) and requires `~> 3.1`; the old
+  pin would now make CocoaPods unresolvable.
 
 ## Revenue
 
-### AdMob verification
-Store link added and `app-ads.txt` served from `zorino96.github.io`; both apps
-still read "Requires review · Limited ad serving" until Google's crawler
-catches up. Nothing further to do — see the `sallaty-admob-needs-store-link`
-memory. iOS cannot be linked at all until the app is on the App Store.
+### AdMob — Android needs "Verify app", iOS needs a store
+Checked 23 August. Both apps still read **"Limited ad serving"**:
+
+- **Android** — store linked (Google Play, `com.selati.app`), one active unit,
+  and the console now offers **"Verify app"** to lift the limit. That is the
+  app-ads.txt ownership check against `zorino96.github.io`.
+- **iOS** — still "Add store to lift limit", and cannot be linked until the app
+  is actually on the App Store.
+
+See the `sallaty-admob-needs-store-link` memory.
 
 ### Play 1.0.1 is serving test adverts
-The live Android build predates the `USE_TEST_ADS = false` change, so every
-user sees Google's "Test mode" placeholder and the app earns nothing. 1.0.2
-fixes it and is a saved draft in the console waiting only for the AAB upload
-(the file is >10 MB, which is over the browser upload cap, so it is a manual
-step).
+The live Android build predates `USE_TEST_ADS = false`, so every user sees
+Google's "Test mode" placeholder and the app earns nothing.
+`~/Downloads/sallaty-1.0.2-versionCode3.aab` (16 MB, targetSdk 35) fixes it and
+the console draft is waiting only on the upload. **The upload is a manual step:**
+the file is over the browser upload cap, and the alternative — a Play API service
+account — would mean handling a private key.
+
+Ship **1.0.2 first** (same risk profile as what is already live, turns on revenue
+today), then **1.0.3** through internal testing. Do not conflate the two: they
+are different builds that happen to be one version apart.
 
 ---
 
 ## Store presence
 
-### Screenshots re-shot in light mode — not yet uploaded
+### Screenshots re-shot in light mode
 All 21 store screenshots were dark-mode captures from 13 August; the default
-theme changed to light on the 18th and the listings kept showing a product that
-does not match what a new user installs. Re-captured on 22 August for all three
-sizes (`store/`, `store/ios/`, `store/ios-65/`) and the script no longer
-hardcodes the dark scheme. **They still have to be uploaded to both consoles.**
-On iOS this was also a soft Guideline 2.3.3 risk — screenshots are meant to
-show the app in use.
+theme changed to light on the 18th, so both listings showed a product that did
+not match what a new user installs. Re-captured 22 August for all three sizes
+(`store/`, `store/ios/`, `store/ios-65/`) and the script no longer hardcodes the
+dark scheme.
+
+- **Play — done.** Seven light phone screenshots uploaded and **submitted for
+  review 23 August**, bundled with the privacy-policy URL change. Submitting
+  restarted the review that had been running since the 22nd; one review covering
+  both changes was judged better than two.
+- **iOS — blocked, deliberately.** Screenshots are read-only while a version is
+  *Waiting for Review*, so changing them means pulling 1.0 out of the queue it
+  entered on 22 August. Not worth it for a theme change. **Do it the day 1.0 is
+  approved** — after that it reviews on its own and cannot hold the app up.
+
+### The Apple Developer Program License Agreement is unsigned
+Flagged in App Store Connect on 23 August: the agreement was updated and **only
+the Account Holder can accept it**. Until they do, no new submission and no
+update goes through — including the iOS screenshot fix above. Nothing technical
+blocks it; it is one signature.
+
+App Store Connect is also asking new **social-media questions on the age rating**
+(App Information). Sallaty has no social features so the answers are all "no",
+but an age rating is a legal attestation and belongs to the owner.
 
 ### Screenshots carry no captions
 Raw screens with no overlaid text. Every competitor annotates. Low effort,
