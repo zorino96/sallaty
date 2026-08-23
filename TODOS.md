@@ -66,17 +66,28 @@ Checked 23 August. Both apps still read **"Limited ad serving"**:
 
 See the `sallaty-admob-needs-store-link` memory.
 
-### Play 1.0.1 is serving test adverts
-The live Android build predates `USE_TEST_ADS = false`, so every user sees
-Google's "Test mode" placeholder and the app earns nothing.
-`~/Downloads/sallaty-1.0.2-versionCode3.aab` (16 MB, targetSdk 35) fixes it and
-the console draft is waiting only on the upload. **The upload is a manual step:**
-the file is over the browser upload cap, and the alternative — a Play API service
-account — would mean handling a private key.
+### Play 1.0.2 — submitted 23 August, in review
+The live build was 1.0.1, which predated `USE_TEST_ADS = false`, so every user
+saw Google's "Test mode" placeholder and the app earned nothing. **1.0.2 was
+uploaded and submitted on 23 August and now reads "Release 3 (1.0.2) in review",
+177 countries, 100% rollout.** Submitting it restarted the review that already
+held the light screenshots and the privacy-policy URL, so all three land
+together.
 
-Ship **1.0.2 first** (same risk profile as what is already live, turns on revenue
-today), then **1.0.3** through internal testing. Do not conflate the two: they
-are different builds that happen to be one version apart.
+Verified before submitting, from the bundle rather than from the source tree:
+versionCode 3, versionName 1.0.2, targetSdk 35 and minSdk 22 (so the Capacitor 8
+build did not go out by mistake), and the minifier had eliminated the
+`USE_TEST_ADS` branch entirely — the only ad units the shipped JavaScript can
+reach are the real ones. Play raised one warning, about a missing deobfuscation
+file; `minifyEnabled` is false, so there is nothing to upload and 1.0.1 carried
+the same warning.
+
+100% rollout was deliberate: with zero installs a staged percentage measures
+nothing and protects nothing.
+
+**The AAB upload is a manual step and will stay one.** The file is 15.8 MB and
+the browser bridge caps a single upload at 10 MB; an AAB cannot be split. The
+alternative, a Play API service account, would mean handling a private key.
 
 ## Data
 
