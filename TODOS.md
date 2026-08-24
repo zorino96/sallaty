@@ -2,7 +2,7 @@
 
 Everything knowingly postponed, with why. If it is not here it does not exist.
 
-Last reviewed: 23 August 2026 (CEO review, HOLD SCOPE).
+Last reviewed: 25 August 2026.
 
 ---
 
@@ -55,16 +55,27 @@ iOS changes on the same branch, unbuildable here (no Mac — Codemagic will tell
 
 ## Revenue
 
-### AdMob — Android needs "Verify app", iOS needs a store
-Checked 23 August. Both apps still read **"Limited ad serving"**:
+### AdMob — the account was rejected
+As of **25 August 2026** every AdMob URL redirects to a single gate: *"Your
+account wasn't approved"*, one checkbox confirming the AdMob Program Policies,
+and a **Resubmit** button. Nothing else in the console is reachable — no apps
+list, no ad units, no reports. It still read "being verified" on 23 August.
 
-- **Android** — store linked (Google Play, `com.selati.app`), one active unit,
-  and the console now offers **"Verify app"** to lift the limit. That is the
-  app-ads.txt ownership check against `zorino96.github.io`.
-- **iOS** — still "Add store to lift limit", and cannot be linked until the app
-  is actually on the App Store.
+The console gives no reason; Google sends it by email. **Read that before
+resubmitting.** Two candidates worth ruling out first:
 
-See the `sallaty-admob-needs-store-link` memory.
+1. **Nothing was serving real ads when they looked.** The live Android build was
+   1.0.1, which shipped Google's *test* units, so the account showed
+   `Requests: 0` and the iOS app was not on any store yet.
+2. **The duplicate account** noted in the `sallaty-admob-account-index` memory —
+   duplicate accounts are an explicit AdMob policy violation.
+
+Both of those have moved since: iOS 1.0 went live on 24 August and Android
+1.0.2, the first build with the real units, is in review.
+
+The checkbox is an attestation about policy compliance and belongs to the app's
+owner. `app-ads.txt` and the Play store link were verified correct on 23 August
+and are not the problem.
 
 ### Play 1.0.2 — submitted 23 August, in review
 The live build was 1.0.1, which predated `USE_TEST_ADS = false`, so every user
@@ -170,10 +181,10 @@ dark scheme.
   review 23 August**, bundled with the privacy-policy URL change. Submitting
   restarted the review that had been running since the 22nd; one review covering
   both changes was judged better than two.
-- **iOS — blocked, deliberately.** Screenshots are read-only while a version is
-  *Waiting for Review*, so changing them means pulling 1.0 out of the queue it
-  entered on 22 August. Not worth it for a theme change. **Do it the day 1.0 is
-  approved** — after that it reviews on its own and cannot hold the app up.
+- **iOS — now unblocked.** 1.0 was approved on 25 August and went live on the
+  24th, so the screenshots are editable again. Upload the light 6.9" and 6.5"
+  sets from  and ; a metadata-only change reviews on
+  its own and cannot hold the app up.
 
 ### The Apple Developer Program License Agreement is unsigned
 Flagged in App Store Connect on 23 August: the agreement was updated and **only
