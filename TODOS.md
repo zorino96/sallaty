@@ -183,7 +183,7 @@ dark scheme.
   both changes was judged better than two.
 - **iOS — now unblocked.** 1.0 was approved on 25 August and went live on the
   24th, so the screenshots are editable again. Upload the light 6.9" and 6.5"
-  sets from  and ; a metadata-only change reviews on
+  sets from `store/ios/` and `store/ios-65/`; a metadata-only change reviews on
   its own and cannot hold the app up.
 
 ### The Apple Developer Program License Agreement is unsigned
