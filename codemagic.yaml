@@ -27,7 +27,10 @@ workflows:
     max_build_duration: 60
 
     environment:
-      node: 20
+      # 22, not 20: @capacitor/cli 8 and @capacitor-community/admob 8 both
+      # declare engines.node >= 22. npm only warns on a mismatch, so the build
+      # would get past `npm ci` and then fail inside `npx cap sync ios`.
+      node: 22
       xcode: latest
       cocoapods: default
       groups:

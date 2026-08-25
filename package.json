@@ -16,6 +16,9 @@
     "ios": "next build && npx cap sync ios && npx cap open ios",
     "validate:bang": "node scripts/validate-bang-data.mjs"
   },
+  "engines": {
+    "node": ">=22"
+  },
   "dependencies": {
     "@capacitor-community/admob": "^8.1.0",
     "@capacitor/android": "^8.5.0",
