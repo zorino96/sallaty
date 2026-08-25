@@ -53,34 +53,40 @@ iOS changes on the same branch, unbuildable here (no Mac — Codemagic will tell
   has moved to the UMP 3.x API (`ConsentStatus`) and requires `~> 3.1`; the old
   pin would now make CocoaPods unresolvable.
 
-### The iOS side of Capacitor 8 has never been compiled
-Everything reachable from Windows passes on `chore/capacitor-8`: the bundled
-tables validate, `next build` succeeds, `tsc --noEmit` is clean, and
-`npx cap sync ios` resolves all six plugins at v8. Android builds and ships a
-targetSdk 36 bundle.
+### Capacitor 8 compiles on iOS — proven, build 15
+Codemagic build 15 (25 August, branch `chore/capacitor-8`, commit `3c53399`)
+answered every open question:
 
-**One real defect was caught before spending a build:** `@capacitor/cli` 8 and
+| Step | Result |
+|---|---|
+| `npm ci` | passed on Node 22 |
+| `next build` + `npx cap sync ios` | 19s — the step that would have died on Node 20 |
+| `pod install` — Capacitor 8, AdMob 8, UMP `~> 3.1` | passed |
+| Swift build — no `DeviceMotionPermission.swift`, target 15.0 | passed |
+| `xcode-project use-profiles` + `build-ipa` | **produced `App.ipa`** |
+| Upload to App Store Connect | **failed** — see below |
+
+The upload failure has nothing to do with Capacitor:
+
+> Invalid Pre-Release Train. The train version '1.0' is closed for new build
+> submissions.
+> This bundle is invalid. The value for `CFBundleShortVersionString` [1.0] must
+> contain a higher version than the previously approved version [1.0].
+
+1.0 was approved and released on 24 August, so Apple will never accept another
+build against it. `MARKETING_VERSION` is now **1.0.1** on the branch, which is
+all that stands between this and a TestFlight build.
+
+**One real defect was caught before spending that build:** `@capacitor/cli` 8 and
 `@capacitor-community/admob` 8 both declare `engines.node >= 22`, and
 `codemagic.yaml` pinned Node 20. npm only warns on an engine mismatch, so
 `npm ci` would have passed and the build would have died two steps later inside
-`npx cap sync ios` with nothing in the log naming Node. Fixed on the branch, and
-`engines` is now declared in `package.json` so the same mismatch surfaces
-locally.
+`npx cap sync ios` with nothing in the log naming Node. Fixed, and `engines` is
+declared in `package.json` so it surfaces locally too.
 
-**Three things still need a Mac and cannot be checked from here:**
-
-1. `pod install` resolving Capacitor 8's pods alongside AdMob 8 and
-   GoogleUserMessagingPlatform `~> 3.1` — the old `< 3.0` pin is gone.
-2. Swift compilation with `DeviceMotionPermission.swift` deleted (Capacitor 8's
-   own `WebViewDelegationHandler` grants the motion permission now) and the
-   deployment target raised to 15.0.
-3. `xcode-project use-profiles` and the archive step.
-
-**Run it against the branch, not `main`.** Codemagic is manual-only
-(`triggering: events: []`) and pins no branch, so the branch can be built
-without touching what App Review has already approved. `main` stays on the
-Capacitor 6 stack that is live on the App Store, which is the stack a hotfix
-would have to go out on.
+**Run builds against the branch, not `main`.** Codemagic is manual-only
+(`triggering: events: []`) and pins no branch. `main` stays on the Capacitor 6
+stack that is live on the App Store — the stack a hotfix would have to go out on.
 
 ## Revenue
 
