@@ -2,7 +2,7 @@
 
 Everything knowingly postponed, with why. If it is not here it does not exist.
 
-Last reviewed: 25 August 2026.
+Last reviewed: 25 August 2026 (CEO review, HOLD SCOPE).
 
 ---
 
@@ -52,6 +52,35 @@ iOS changes on the same branch, unbuildable here (no Mac — Codemagic will tell
 - Podfile: the `GoogleUserMessagingPlatform '< 3.0'` pin **removed.** AdMob 8.1.0
   has moved to the UMP 3.x API (`ConsentStatus`) and requires `~> 3.1`; the old
   pin would now make CocoaPods unresolvable.
+
+### The iOS side of Capacitor 8 has never been compiled
+Everything reachable from Windows passes on `chore/capacitor-8`: the bundled
+tables validate, `next build` succeeds, `tsc --noEmit` is clean, and
+`npx cap sync ios` resolves all six plugins at v8. Android builds and ships a
+targetSdk 36 bundle.
+
+**One real defect was caught before spending a build:** `@capacitor/cli` 8 and
+`@capacitor-community/admob` 8 both declare `engines.node >= 22`, and
+`codemagic.yaml` pinned Node 20. npm only warns on an engine mismatch, so
+`npm ci` would have passed and the build would have died two steps later inside
+`npx cap sync ios` with nothing in the log naming Node. Fixed on the branch, and
+`engines` is now declared in `package.json` so the same mismatch surfaces
+locally.
+
+**Three things still need a Mac and cannot be checked from here:**
+
+1. `pod install` resolving Capacitor 8's pods alongside AdMob 8 and
+   GoogleUserMessagingPlatform `~> 3.1` — the old `< 3.0` pin is gone.
+2. Swift compilation with `DeviceMotionPermission.swift` deleted (Capacitor 8's
+   own `WebViewDelegationHandler` grants the motion permission now) and the
+   deployment target raised to 15.0.
+3. `xcode-project use-profiles` and the archive step.
+
+**Run it against the branch, not `main`.** Codemagic is manual-only
+(`triggering: events: []`) and pins no branch, so the branch can be built
+without touching what App Review has already approved. `main` stays on the
+Capacitor 6 stack that is live on the App Store, which is the stack a hotfix
+would have to go out on.
 
 ## Revenue
 
