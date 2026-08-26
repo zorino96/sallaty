@@ -112,28 +112,43 @@ The checkbox is an attestation about policy compliance and belongs to the app's
 owner. `app-ads.txt` and the Play store link were verified correct on 23 August
 and are not the problem.
 
-### Play 1.0.2 — submitted 23 August, in review
-The live build was 1.0.1, which predated `USE_TEST_ADS = false`, so every user
-saw Google's "Test mode" placeholder and the app earned nothing. **1.0.2 was
-uploaded and submitted on 23 August and now reads "Release 3 (1.0.2) in review",
-177 countries, 100% rollout.** Submitting it restarted the review that already
-held the light screenshots and the privacy-policy URL, so all three land
-together.
+### Play 1.0.2 — LIVE since 23 August
+The Play review passed. `com.selati.app` reads version **1.0.2**, "Updated on
+Aug 23, 2026", carrying the 1.0.2 release notes, "Contains ads", and an Install
+button. That build has `USE_TEST_ADS = false`, so **Android is serving real ad
+units for the first time** — which is also the traffic AdMob's account review
+has been waiting to see. The light screenshots and the privacy-policy URL went
+live in the same review.
 
-Verified before submitting, from the bundle rather than from the source tree:
+Verified before submitting, from the bundle rather than the source tree:
 versionCode 3, versionName 1.0.2, targetSdk 35 and minSdk 22 (so the Capacitor 8
 build did not go out by mistake), and the minifier had eliminated the
-`USE_TEST_ADS` branch entirely — the only ad units the shipped JavaScript can
-reach are the real ones. Play raised one warning, about a missing deobfuscation
-file; `minifyEnabled` is false, so there is nothing to upload and 1.0.1 carried
-the same warning.
-
-100% rollout was deliberate: with zero installs a staged percentage measures
-nothing and protects nothing.
+`USE_TEST_ADS` branch entirely.
 
 **The AAB upload is a manual step and will stay one.** The file is 15.8 MB and
 the browser bridge caps a single upload at 10 MB; an AAB cannot be split. The
 alternative, a Play API service account, would mean handling a private key.
+
+### The listing is live but not findable by intent
+Checked 25 August against Play search:
+
+| Query | Found |
+|---|---|
+| `Sallaty` | yes |
+| `سەڵاتی` | yes |
+| **`کاتی نوێژ`** | **no** |
+| `Sallaty Prayer` | no |
+
+So the app is reachable only by people who already know its name. Anyone
+searching the way a real user searches — for prayer times, in Kurdish — does not
+see it. The store title already contains `کاتی نوێژ`; that is not enough on its
+own, because Play weights install and engagement signals heavily and this app
+has none yet.
+
+This is the concrete, measurable form of "Nobody is looking for this app" below.
+The cheapest lever is the **short and full description**: they are the indexed
+fields we fully control, and they currently read as prose rather than as
+something written to be searched.
 
 ## Data
 
