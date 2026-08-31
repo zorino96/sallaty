@@ -2,7 +2,43 @@
 
 Everything knowingly postponed, with why. If it is not here it does not exist.
 
-Last reviewed: 25 August 2026 (CEO review, HOLD SCOPE).
+Last reviewed: 1 September 2026.
+
+---
+
+## Shipped without adverts — 1 September 2026
+
+Both stores are in review with the ad-free build. Nothing is waiting on us.
+
+| | Version | State |
+|---|---|---|
+| Google Play | `4 (1.0.3)` | in review — no ads, targetSdk 36, minSdk 24 |
+| App Store | `1.0.1 (16)` | Waiting for Review — no ads, Capacitor 8 |
+
+**Console declarations, all corrected to match the code:**
+
+- Play *Advertising ID*: Yes → **No**. Play caught the mismatch itself at the
+  release-review step — the console still claimed the app used an advertising
+  ID while the new bundle no longer requested `AD_ID`. That error was the proof
+  the removal was real.
+- Play *Contains ads*: Yes → **No**.
+- Play *content rating*: questionnaire resubmitted 1 September, all nine answers
+  "No". The old 13+ existed only because of the adverts.
+- App Store *App Privacy*: `Device ID` + `Advertising Data` → **Data Not
+  Collected**.
+
+**Android developer verification: done, and it always was.** `com.selati.app`
+reads **Registered** with 3 keys since 12 August, as does `com.zorin.tictactoe`.
+The "[Final reminder] … before Sep 30, 2026" email was a mass notice, not a
+warning aimed at this account. No action was ever needed.
+
+**First installs.** Play shows **2 installs** — the first real users, after
+three weeks at zero.
+
+**Still dark:** the iOS screenshots. They are locked while 1.0.1 is in review
+and carry no rejection risk — Apple has approved them twice. Replace them with
+the light `store/ios/` and `store/ios-65/` sets once 1.0.1 clears; it is a
+conversion problem, not a policy one.
 
 ---
 
