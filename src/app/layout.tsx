@@ -4,7 +4,6 @@ import { AppProvider } from '@/lib/AppProvider';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import SwipeNav from '@/components/SwipeNav';
 import NowPlayingBar from '@/components/NowPlayingBar';
-import AdGate from '@/components/AdGate';
 
 export const metadata: Metadata = {
   title: 'سەڵاتی · نوێژەکانم',
@@ -33,7 +32,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <div className="phone-frame">{children}</div>
             <SwipeNav />
             <NowPlayingBar />
-            <AdGate />
           </ErrorBoundary>
         </AppProvider>
       </body>

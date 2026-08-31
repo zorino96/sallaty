@@ -24,13 +24,6 @@
 
         </activity>
 
-        <!-- AdMob application id (real — publisher pub-7966248989436758).
-             The Ads SDK CRASHES at startup if this meta-data is missing.
-             Which ad UNIT is served is decided in src/lib/ads.ts (test vs real). -->
-        <meta-data
-            android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="ca-app-pub-7966248989436758~3302830034" />
-
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.fileprovider"

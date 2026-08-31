@@ -1,6 +1,6 @@
 # Privacy Policy — سەڵاتی (Sallaty)
 
-**Last updated: 16 August 2026**
+**Last updated: 31 August 2026**
 
 > Published at <https://zorino96.github.io/sallaty/>, from `docs/index.html`.
 > Keep the two in step: this file is the readable source, that one is what the
@@ -19,10 +19,8 @@ what the app does and does not do with your information.
 - هیچ سێرڤەرێکی ئێمە نییە — هەموو زانیارییەکان تەنها لەناو مۆبایلەکەی خۆتدا دەمێننەوە.
 - شوێنەکەت (GPS) تەنها لەناو مۆبایلەکەدا بەکاردێت بۆ دیاریکردنی کاتی نوێژ و ئاراستەی قیبلە — بۆ دەرەوە نانێردرێت.
 - ئەگەر ئەپەکە بسڕیتەوە، هەموو زانیارییەکان لەگەڵیدا دەسڕێنەوە.
-- ئەپەکە ڕیکلامی بچووکی بانەر (Google AdMob) پیشان دەدات لە خوارەوەی شاشەکەدا —
-  هەرگیز بە شێوەی تەواوپەڕە یان پچڕێنەر، و هەرگیز ناوەڕۆک دانانوقێنێت.
-  **لەکاتی بانگدا هیچ ڕیکلامێک پیشان نادرێت.** گووگڵ بۆ ڕیکلام
-  ناسنامەی ڕیکلامی ئامێرەکەت بەکاردەهێنێت؛ ئێمە ئەو زانیارییەمان پێناگات.
+- ئەپەکە **هیچ ڕیکلامێک پیشان نادات** و هیچ ناسنامەیەکی ڕیکلامی ئامێرەکەت
+  بەکارناهێنێت.
 
 ## ملخّص بالعربية
 
@@ -32,18 +30,15 @@ what the app does and does not do with your information.
 - لا نملك أي خادم — تبقى جميع البيانات على هاتفك فقط.
 - يُستخدم موقعك (GPS) داخل الهاتف فقط لتحديد أوقات الصلاة واتجاه القبلة، ولا يُرسل إلى الخارج.
 - عند حذف التطبيق تُحذف جميع البيانات معه.
-- يعرض التطبيق إعلان بانر صغيرًا (Google AdMob) أسفل الشاشة — ولا يعرض أبدًا
-  إعلانات ملء الشاشة أو مقاطعة، ولا يغطي المحتوى. **ولا يظهر أي إعلان أثناء
-  رفع الأذان.** تستخدم جوجل معرّف الإعلان الخاص بجهازك؛ ولا تصلنا تلك البيانات.
+- **لا يعرض التطبيق أي إعلانات**، ولا يستخدم معرّف الإعلان الخاص بجهازك.
 
 ---
 
 ## 1. Information we collect
 
 **We do not collect any personal data.** Sallaty has no user accounts, no
-analytics, and no backend server operated by us. We cannot see who you are or
-how you use the app. The only third-party component is the Google AdMob advert
-SDK, described in section 6.
+analytics, no advertising, and no backend server operated by us. We cannot see
+who you are or how you use the app.
 
 ## 2. Information stored on your device
 
@@ -82,33 +77,18 @@ official prayer times for a new year. This request contains no personal data.
 If you open "nearby mosques", the app hands the request to your maps app, which
 is governed by its own privacy policy.
 
-## 6. Advertising (Google AdMob)
+## 6. Advertising
 
-Sallaty shows a small banner advert at the bottom of the screen, provided by
-**Google AdMob**. It is always a banner — never a full-screen or interstitial
-format, and never anything that covers content or interrupts what you are
-doing. **No advert is shown while the adhan is sounding.**
+**Sallaty shows no adverts.**
 
-To serve these adverts, Google AdMob may collect and process:
+Earlier versions carried a single banner supplied by Google AdMob. It was
+removed at the request of the people who use the app, who felt that taking
+advertising revenue from a religious app was not right. The AdMob SDK is no
+longer bundled, the app never reads your device's advertising identifier, and
+no advertising network receives anything from it.
 
-- your device's **advertising identifier**
-- approximate location derived from IP address, device type and OS version
-- interaction with the advert (views, taps)
-
-This is handled by Google, not by us — we never receive this data. Google's use
-of it is governed by their own policies:
-
-- Google Privacy Policy: <https://policies.google.com/privacy>
-- How Google uses data from apps that use its services:
-  <https://policies.google.com/technologies/partner-sites>
-
-**Your choices.** In the European Economic Area and the UK the app shows a
-consent form before any personalised advert is served, and you may refuse.
-On any device you can limit or reset the advertising identifier in your system
-settings (Android: *Settings → Google → Ads*; iOS: *Settings → Privacy &
-Security → Tracking*).
-
-We use **no analytics and no other tracking SDKs**.
+We use **no analytics and no other tracking SDKs** either. Sallaty has no
+revenue model: it is given away.
 
 ## 7. Children
 

@@ -69,7 +69,7 @@ Morning and evening adhkar, the adhkar after prayer, and a tap counter for dhikr
 BUILT FOR PRIVACY
 No account. No servers of ours. Nothing you do in the app leaves your phone, and deleting the app deletes everything with it. The Qur'an text, the translations, the prayer times and the adhan recordings are all bundled inside the app, so it works with no connection at all.
 
-A small banner advert sits at the bottom of the screen, below the navigation bar. It is always a banner — never a full-screen or interrupting format, and it never covers what you are reading. No advert is shown while the adhan is sounding.
+No adverts. Sallaty is free and carries nothing that earns from you — no banners, no sponsors, no tracking.
 
 CONTENT SOURCES
 Prayer times: amozhgary.tv
@@ -149,11 +149,11 @@ questionnaire instead, and on content alone Sallaty answers "none" to every
 question, which yields **4+**. That is the honest answer for the content, and
 it matches how most prayer apps are rated.
 
-The two stores therefore disagree, on purpose, because they are measuring
-different things: Play's 13+ follows from serving third-party adverts, Apple's
-4+ follows from the content itself. The adverts are still constrained to
-G-rated inventory with 12 sensitive categories blocked at the AdMob account
-level, so 4+ does not weaken anything a user actually sees.
+Play's 13+ was a consequence of serving third-party adverts. **Adverts were
+removed from the app on 31 August 2026**, so that reason is gone — re-run the
+Play content questionnaire, answer "no" to advertising, and the rating should
+come down to match Apple's 4+. Both stores are then measuring the same thing:
+the content, which has always been 4+.
 
 Note this is *not* the same as the "Made for Kids" category — answer **No** to
 that; the app is not directed at children.
