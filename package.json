@@ -14,7 +14,8 @@
     "aab": "npm run validate:bang && next build && npx cap sync android && cd android && gradlew.bat bundleRelease",
     "cap:sync:ios": "npm run validate:bang && next build && npx cap sync ios",
     "ios": "next build && npx cap sync ios && npx cap open ios",
-    "validate:bang": "node scripts/validate-bang-data.mjs"
+    "validate:bang": "node scripts/validate-bang-data.mjs",
+    "adhan:sync": "node scripts/sync-adhan-assets.mjs"
   },
   "engines": {
     "node": ">=22"

@@ -8,7 +8,7 @@ export type AdhanAlarmItem = {
   at: number;       // epoch ms
   title: string;
   body: string;
-  sound: string;    // res/raw base name e.g. "adhan_aqib" ("" → default alarm)
+  sound: string;    // res/raw base name e.g. "adhan_doha" ("" → default alarm)
 };
 
 export interface AdhanAlarmPlugin {

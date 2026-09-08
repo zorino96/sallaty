@@ -35,9 +35,16 @@ function isNative(): boolean {
 // res/raw (Android) / bundle (iOS) base name for the selected adhan, or '' for a
 // chime (→ native plays the device default alarm tone; chimes are synthesized
 // in-page only).
-function soundBase(adhanId: string): string {
+//
+// A track may ship a separate dawn recording. Fajr then resolves to the `_fajr`
+// base name; every other prayer, and every track without one, resolves to the
+// plain name. The file that backs it has to exist under both res/raw and
+// ios/App/App/Sounds — `npm run adhan:sync` is what guarantees that.
+function soundBase(adhanId: string, prayer?: PrayerName): string {
   const track = trackById(adhanId);
-  return track?.file ? adhanId.replace(/-/g, '_') : '';
+  if (!track?.file) return '';
+  const base = adhanId.replace(/-/g, '_');
+  return prayer === 'fajr' && track.fajrFile ? `${base}_fajr` : base;
 }
 
 // ─── Permissions ─────────────────────────────────────────────────────────────
@@ -142,9 +149,11 @@ export async function schedulePrayerNotifications(input: ScheduleInput): Promise
 
   // ── Android: exact-alarm pipeline plays the full adhan ──────────────────────
   if (platform() === 'android') {
-    const sound = soundBase(input.adhanId);
+    // Resolved per item, not once: the native scheduler already carries a sound
+    // on every alarm, so Fajr can differ without any change below the JS.
     const items: AdhanAlarmItem[] = upcoming(input, days, now, horizon).map((u) => ({
-      id: u.id, at: u.at, title: input.title, body: input.bodyFor(u.prayer), sound,
+      id: u.id, at: u.at, title: input.title, body: input.bodyFor(u.prayer),
+      sound: soundBase(input.adhanId, u.prayer),
     }));
     try {
       await AdhanAlarm.schedule({ items });
@@ -154,17 +163,18 @@ export async function schedulePrayerNotifications(input: ScheduleInput): Promise
 
   // ── iOS: local notifications with a short (<=30s) bundled adhan sound ────────
   if (platform() === 'ios') {
-    const base = soundBase(input.adhanId);
     // iOS expects a bundled audio file name (aiff/wav/caf, <=30s). We use the
-    // same base names as Android res/raw (e.g. adhan_aqib) with a .caf extension.
-    const sound = base ? `${base}.caf` : undefined;
-    const notifications = upcoming(input, days, now, horizon).map((u) => ({
-      id: u.id,
-      title: input.title,
-      body: input.bodyFor(u.prayer),
-      schedule: { at: new Date(u.at), allowWhileIdle: true },
-      sound,
-    }));
+    // same base names as Android res/raw (e.g. adhan_doha) with a .caf extension.
+    const notifications = upcoming(input, days, now, horizon).map((u) => {
+      const base = soundBase(input.adhanId, u.prayer);
+      return {
+        id: u.id,
+        title: input.title,
+        body: input.bodyFor(u.prayer),
+        schedule: { at: new Date(u.at), allowWhileIdle: true },
+        sound: base ? `${base}.caf` : undefined,
+      };
+    });
     try {
       if (notifications.length) await LocalNotifications.schedule({ notifications });
     } catch { /* ignore */ }
