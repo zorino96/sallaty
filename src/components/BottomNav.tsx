@@ -20,8 +20,18 @@ export default function BottomNav() {
   const pathname = usePathname();
 
   return (
+    // `bottom-0` is what makes `sticky` mean anything. Without an inset a sticky
+    // element is laid out exactly like a static one, so the bar sat wherever the
+    // page happened to end — 1943px down a 812px screen on the home page, which
+    // is to say off it. You had to scroll to the foot of the page to reach the
+    // tabs. The banner used to sit under here; with it gone the bar can hold the
+    // bottom of the screen the way it always looked like it did.
+    //
+    // bottom-3 rather than bottom-0 so it matches mb-3: the pinned position and
+    // the resting position at the foot of the page are then the same, and the
+    // bar does not hop the last 12px as you reach the end of a scroll.
     <nav
-      className="bottom-nav glass sticky z-30 mx-auto mt-3 mb-3 w-[92%] max-w-[412px] rounded-[26px] px-2.5 pt-2"
+      className="bottom-nav glass sticky bottom-3 z-30 mx-auto mt-3 mb-3 w-[92%] max-w-[412px] rounded-[26px] px-2.5 pt-2"
       style={{ paddingBottom: 'max(8px, env(safe-area-inset-bottom))' }}
     >
       <ul className="flex items-end justify-between">
@@ -50,7 +60,11 @@ export default function BottomNav() {
                     'text-[9.5px] font-semibold leading-none transition-all duration-300 ' +
                     (active
                       ? '-translate-y-1.5 text-gold-700 dark:text-gold-300 opacity-100'
-                      : 'text-ink-800/45 dark:text-ivory-100/40 opacity-0 group-hover:opacity-100')
+                      // Visible, not hover-revealed. A phone has no hover, so
+                      // `group-hover:opacity-100` never fired on the device this
+                      // is built for: four of the five tabs were bare icons, and
+                      // only the one you were already on said what it was.
+                      : 'text-ink-800/45 dark:text-ivory-100/40 opacity-100')
                   }
                 >
                   {t(label)}
