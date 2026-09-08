@@ -226,6 +226,11 @@ export default function ControlPage() {
                   key={a.id}
                   onClick={() => {
                     setAdhanId(a.id);
+                    // Tapping the name plays it too. Every other sound picker on both phones
+                    // works this way, and without it the only way to hear a track on this page
+                    // is the single button up in the section header — which plays whatever is
+                    // already selected, so tapping a new name looked like silence.
+                    playAdhan(a.id);
                     if (typeof navigator !== 'undefined' && 'vibrate' in navigator) navigator.vibrate?.(6);
                   }}
                   aria-pressed={selected}
