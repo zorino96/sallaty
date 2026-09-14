@@ -13,6 +13,30 @@ function vibrate(p: number): void {
   if (typeof navigator !== 'undefined' && 'vibrate' in navigator) navigator.vibrate?.(p);
 }
 
+// A supplication can have a gap in it that the reader fills with their own
+// words — the Istikhara names your need, twice. Printed du'a books mark the
+// spot inside the line rather than in a footnote, because you need to know
+// where to stop at the moment you reach it, not afterwards. `{{need}}` in the
+// Arabic marks that gap.
+const NEED_SLOT = '{{need}}';
+const NEED_LABEL = { ku: 'ناوی پێویستییەکەت دەهێنیت', ar: 'تُسمّي حاجتك' };
+
+function withNeedSlots(arabic: string, isAr: boolean): React.ReactNode[] {
+  return arabic.split(NEED_SLOT).flatMap((part, i) =>
+    i === 0
+      ? [part]
+      : [
+          <span
+            key={i}
+            className="mx-1 inline-block rounded-full bg-gold-500/20 px-2 py-0.5 align-middle font-rabar text-[11px] font-semibold text-gold-700 dark:text-gold-300"
+          >
+            {isAr ? NEED_LABEL.ar : NEED_LABEL.ku}
+          </span>,
+          part,
+        ],
+  );
+}
+
 const CATEGORY_BADGE: Record<PrayerKind, { ku: string; ar: string }> = {
   fard:     { ku: 'فەرز',   ar: 'فرض'  },
   sunnah:   { ku: 'سونەت',  ar: 'سنّة' },
@@ -110,8 +134,8 @@ export default function PrayerTypesPage() {
                               {isAr ? step.labelAr : step.labelKu}
                             </div>
                             {step.arabic && (
-                              <div className="mt-2 text-right text-[19px] font-bold leading-[2]" dir="rtl">
-                                {step.arabic}
+                              <div className="mt-2 text-right text-[19px] font-bold leading-[2.1]" dir="rtl">
+                                {withNeedSlots(step.arabic, isAr)}
                               </div>
                             )}
                             <p className="mt-2 text-[12.5px] leading-6 text-ink-800/75 dark:text-cream-100/75">
