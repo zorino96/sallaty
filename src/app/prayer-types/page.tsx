@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Clock, ListOrdered } from 'lucide-react';
+import { ChevronDown, Clock, ListOrdered } from 'lucide-react';
 import BottomNav from '@/components/BottomNav';
 import PageHeader from '@/components/PageHeader';
 import { useApp } from '@/lib/AppProvider';
@@ -24,6 +24,9 @@ export default function PrayerTypesPage() {
   const { t, lang } = useApp();
   const isAr = lang === 'ar';
   const [filter, setFilter] = useState<Filter>('all');
+  // Only the entries that carry their own words open — the rest have nothing
+  // behind the summary to show.
+  const [open, setOpen] = useState<string | null>(null);
 
   const tabs: Array<{ id: Filter; label: string }> = [
     { id: 'all',      label: isAr ? 'الكل' : 'هەموو' },
@@ -82,6 +85,45 @@ export default function PrayerTypesPage() {
               <p className="mt-2 text-[13px] leading-6 text-ink-800/75 dark:text-cream-100/75">
                 {isAr ? item.descAr : item.descKu}
               </p>
+
+              {item.steps && (() => {
+                const isOpen = open === item.id;
+                return (
+                  <>
+                    <button
+                      onClick={() => { setOpen(isOpen ? null : item.id); vibrate(6); }}
+                      aria-expanded={isOpen}
+                      className="mt-3 flex w-full items-center justify-between gap-2 rounded-xl bg-gold-500/10 px-3 py-2 text-[12px] font-semibold text-gold-700 transition active:scale-[0.99] dark:text-gold-300"
+                    >
+                      <span>{isAr ? 'الأدعية والخطوات' : 'دوعا و هەنگاوەکان'}</span>
+                      <ChevronDown
+                        size={14}
+                        className={'transition-transform duration-300 ' + (isOpen ? 'rotate-180' : '')}
+                      />
+                    </button>
+
+                    {isOpen && (
+                      <div className="mt-2 space-y-3">
+                        {item.steps.map((step, n) => (
+                          <div key={n} className="rounded-xl bg-cream-100 p-3 dark:bg-teal-900/50">
+                            <div className="text-[12px] font-bold text-gold-700 dark:text-gold-300">
+                              {isAr ? step.labelAr : step.labelKu}
+                            </div>
+                            {step.arabic && (
+                              <div className="mt-2 text-right text-[19px] font-bold leading-[2]" dir="rtl">
+                                {step.arabic}
+                              </div>
+                            )}
+                            <p className="mt-2 text-[12.5px] leading-6 text-ink-800/75 dark:text-cream-100/75">
+                              {isAr ? step.meaningAr : step.meaningKu}
+                            </p>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </>
+                );
+              })()}
             </article>
           );
         })}
